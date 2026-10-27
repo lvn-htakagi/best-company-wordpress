@@ -1509,6 +1509,133 @@ function mytheme_save_shop_relationship($post_id) {
     update_post_meta($post_id, '_shop_relationship', $relationship);
 }
 add_action('save_post_shop', 'mytheme_save_shop_relationship');
+
+/**
+ * 沿革編集画面に「ショップ」を追加
+ */
+function mytheme_add_history_shop_field() {
+    add_meta_box(
+        'history_shop',
+        'ショップ',
+        'mytheme_render_history_shop_field',
+        'shop_history',
+        'normal',
+        'default'
+    );
+}
+add_action('add_meta_boxes', 'mytheme_add_history_shop_field');
+
+/**
+ * ショップ選択欄を表示
+ */
+function mytheme_render_history_shop_field($post) {
+    $selected_shop_id = get_post_meta(
+        $post->ID,
+        '_shop_history_shop_id',
+        true
+    );
+
+    wp_nonce_field(
+        'mytheme_save_history_shop',
+        'mytheme_history_shop_nonce'
+    );
+
+    // 登録済みのショップを取得
+    $shops = get_posts([
+        'post_type'      => 'shop',
+        'post_status'    => ['publish', 'draft', 'private'],
+        'posts_per_page' => -1,
+        'orderby'        => 'ID',
+        'order'          => 'ASC',
+    ]);
+
+    echo '<select name="history_shop_id" id="history_shop_id">';
+    echo '<option value="">ショップを選択してください</option>';
+
+    foreach ($shops as $shop) {
+        $shop_name = get_post_meta(
+            $shop->ID,
+            '_shop_name',
+            true
+        );
+
+        // ショップ名が未入力の場合の表示
+        if ($shop_name === '') {
+            $shop_name = 'ショップID: ' . $shop->ID;
+        }
+
+        echo '<option value="' . esc_attr($shop->ID) . '"'
+            . selected(
+                (string) $selected_shop_id,
+                (string) $shop->ID,
+                false
+            )
+            . '>';
+        echo esc_html($shop_name);
+        echo '</option>';
+    }
+
+    echo '</select>';
+}
+
+/**
+ * 沿革に紐付けるショップIDを保存
+ */
+function mytheme_save_history_shop($post_id) {
+    // nonceの検証
+    if (
+        !isset($_POST['mytheme_history_shop_nonce']) ||
+        !wp_verify_nonce(
+            sanitize_text_field(
+                wp_unslash($_POST['mytheme_history_shop_nonce'])
+            ),
+            'mytheme_save_history_shop'
+        )
+    ) {
+        return;
+    }
+
+    // 自動保存を除外
+    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+        return;
+    }
+
+    // 沿革の編集権限を確認
+    if (
+        get_post_type($post_id) !== 'shop_history' ||
+        !current_user_can('edit_post', $post_id)
+    ) {
+        return;
+    }
+
+    if (!isset($_POST['history_shop_id'])) {
+        return;
+    }
+
+    $shop_id = absint($_POST['history_shop_id']);
+
+    // 選択解除なら紐付けを削除
+    if ($shop_id === 0) {
+        delete_post_meta($post_id, '_shop_history_shop_id');
+        return;
+    }
+
+    // 実在するショップか確認
+    if (
+        get_post_type($shop_id) !== 'shop' ||
+        !current_user_can('edit_post', $shop_id)
+    ) {
+        return;
+    }
+
+    update_post_meta(
+        $post_id,
+        '_shop_history_shop_id',
+        $shop_id
+    );
+}
+add_action('save_post_shop_history', 'mytheme_save_history_shop');
+
 /**
  * 沿革編集画面に「年」を追加
  */
