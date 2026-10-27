@@ -852,3 +852,185 @@ function mytheme_save_shop_license_number($post_id) {
 }
 add_action('save_post', 'mytheme_save_shop_license_number');
 
+/**
+ * ショップ編集画面に「加盟団体(企業概要)」を追加
+ */
+function mytheme_add_shop_organizations_field() {
+    add_meta_box(
+        'shop_organizations',
+        '加盟団体',
+        'mytheme_render_shop_organizations_field',
+        'shop',
+        'normal',
+        'default'
+    );
+}
+add_action('add_meta_boxes', 'mytheme_add_shop_organizations_field');
+
+/**
+ * 事業内容(企業概要)の入力欄を表示
+ */
+function mytheme_render_shop_organizations_field($post) {
+    $organizations = get_post_meta($post->ID, '_shop_organizations', true);
+
+    wp_nonce_field('mytheme_save_shop_organizations', 'mytheme_shop_organizations_nonce');
+    ?>
+    <label for="shop_organizations">加盟団体(企業概要)</label>
+    <textarea
+        id="shop_organizations"
+        name="shop_organizations"
+        style="width: 100%;"
+    ><?php echo esc_textarea($organizations); ?></textarea>
+    <?php
+}
+
+/**
+ * 加盟団体(企業概要)を保存
+ */
+function mytheme_save_shop_organizations($post_id) {
+    if (
+        !isset($_POST['mytheme_shop_organizations_nonce']) ||
+        !wp_verify_nonce(
+            sanitize_text_field(wp_unslash($_POST['mytheme_shop_organizations_nonce'])),
+            'mytheme_save_shop_organizations'
+        )
+    ) {
+        return;
+    }
+
+    if (!mytheme_can_save_shop($post_id)) {
+        return;
+    }
+
+    $organizations = sanitize_text_field(wp_unslash($_POST['shop_organizations']));
+
+    if ($organizations === '') {
+        delete_post_meta($post_id, '_shop_organizations');
+        return;
+    }
+
+    update_post_meta($post_id, '_shop_organizations', $organizations);
+}
+add_action('save_post', 'mytheme_save_shop_organizations');
+
+/**
+ * ショップ編集画面に「拠点(企業概要)」を追加
+ */
+function mytheme_add_shop_base_field() {
+    add_meta_box(
+        'shop_base',
+        '拠点',
+        'mytheme_render_shop_base_field',
+        'shop',
+        'normal',
+        'default'
+    );
+}
+add_action('add_meta_boxes', 'mytheme_add_shop_base_field');
+
+/**
+ * 拠点(企業概要)の入力欄を表示
+ */
+function mytheme_render_shop_base_field($post) {
+    $base = get_post_meta($post->ID, '_shop_base', true);
+
+    wp_nonce_field('mytheme_save_shop_base', 'mytheme_shop_base_nonce');
+    ?>
+    <label for="shop_base">拠点(企業概要)</label>
+    <textarea
+        id="shop_base"
+        name="shop_base"
+        style="width: 100%;"
+    ><?php echo esc_textarea($base); ?></textarea>
+    <?php
+}
+
+/**
+ * 拠点(企業概要)を保存
+ */
+function mytheme_save_shop_base($post_id) {
+    if (
+        !isset($_POST['mytheme_shop_base_nonce']) ||
+        !wp_verify_nonce(
+            sanitize_text_field(wp_unslash($_POST['mytheme_shop_base_nonce'])),
+            'mytheme_save_shop_base'
+        )
+    ) {
+        return;
+    }
+
+    if (!mytheme_can_save_shop($post_id)) {
+        return;
+    }
+
+    $base = sanitize_text_field(wp_unslash($_POST['shop_base']));
+
+    if ($base === '') {
+        delete_post_meta($post_id, '_shop_base');
+        return;
+    }
+
+    update_post_meta($post_id, '_shop_base', $base);
+}
+add_action('save_post', 'mytheme_save_shop_base');
+
+/**
+ * ショップ編集画面に「関係会社(企業概要)」を追加
+ */
+function mytheme_add_shop_relationship_field() {
+    add_meta_box(
+        'shop_relationship',
+        '関係会社',
+        'mytheme_render_shop_relationship_field',
+        'shop',
+        'normal',
+        'default'
+    );
+}
+add_action('add_meta_boxes', 'mytheme_add_shop_relationship_field');
+
+/**
+ * 関係会社(企業概要)の入力欄を表示
+ */
+function mytheme_render_shop_relationship_field($post) {
+    $relationship = get_post_meta($post->ID, '_shop_relationship', true);
+
+    wp_nonce_field('mytheme_save_shop_relationship', 'mytheme_shop_relationship_nonce');
+    ?>
+    <label for="shop_relationship">関係会社(企業概要)</label>
+    <textarea
+        id="shop_relationship"
+        name="shop_relationship"
+        style="width: 100%;"
+    ><?php echo esc_textarea($relationship); ?></textarea>
+    <?php
+}
+
+/**
+ * 関係会社(企業概要)を保存
+ */
+function mytheme_save_shop_relationship($post_id) {
+    if (
+        !isset($_POST['mytheme_shop_relationship_nonce']) ||
+        !wp_verify_nonce(
+            sanitize_text_field(wp_unslash($_POST['mytheme_shop_relationship_nonce'])),
+            'mytheme_save_shop_relationship'
+        )
+    ) {
+        return;
+    }
+
+    if (!mytheme_can_save_shop($post_id)) {
+        return;
+    }
+
+    $relationship = sanitize_text_field(wp_unslash($_POST['shop_relationship']));
+
+    if ($relationship === '') {
+        delete_post_meta($post_id, '_shop_relationship');
+        return;
+    }
+
+    update_post_meta($post_id, '_shop_relationship', $relationship);
+}
+add_action('save_post', 'mytheme_save_shop_relationship');
