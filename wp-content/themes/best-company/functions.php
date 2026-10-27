@@ -214,7 +214,8 @@ function mytheme_render_shop_image_field($post) {
 
     echo '</div>';
 
-    echo '<input type="hidden" id="shop_image" name="shop_image" value="' . esc_attr($image_id) . '">';
+    echo '<input type="hidden" id="shop-image-id" name="shop_image" value="' . esc_attr($image_id) . '">';
+    echo '<input type="hidden" id="shop-image-removed" name="shop_image_removed" value="0">';
 
     echo '<button type="button" class="button" id="shop-image-select">画像を選択</button> ';
     echo '<button type="button" class="button" id="shop-image-remove">画像を削除</button>';
@@ -240,7 +241,7 @@ function mytheme_enqueue_shop_media($hook) {
         'mytheme-shop-media',
         get_theme_file_uri('/js/shop-media.js'),
         ['jquery'],
-        null,
+        filemtime(get_theme_file_path('/js/shop-media.js')),
         true
     );
 }
@@ -264,6 +265,15 @@ function mytheme_save_shop_image($post_id) {
         return;
     }
 
+    if (
+        isset($_POST['shop_image_removed']) &&
+        is_string($_POST['shop_image_removed']) &&
+        sanitize_text_field(wp_unslash($_POST['shop_image_removed'])) === '1'
+    ) {
+        delete_post_meta($post_id, '_shop_image');
+        return;
+    }
+
     if (!isset($_POST['shop_image'])) {
         return;
     }
@@ -274,11 +284,11 @@ function mytheme_save_shop_image($post_id) {
         return;
     }
 
-    if ($image_id) {
-        update_post_meta($post_id, '_shop_image', $image_id);
-    } else {
-        delete_post_meta($post_id, '_shop_image');
+    if (!$image_id) {
+        return;
     }
+
+    update_post_meta($post_id, '_shop_image', $image_id);
 }
 add_action('save_post_shop', 'mytheme_save_shop_image');
 
@@ -1964,3 +1974,22 @@ function mytheme_shop_orderby($query) {
     }
 }
 add_action('pre_get_posts', 'mytheme_shop_orderby');
+
+/**
+ * 年別ショップ一覧のURL
+ * /shops/2026 → ショップ一覧（2026年）
+ */
+function mytheme_shop_year_rewrite_rules() {
+    add_rewrite_rule(
+        '^shops/([0-9]{4})/?$',
+        'index.php?post_type=shop&shop_year=$matches[1]',
+        'top'
+    );
+}
+add_action('init', 'mytheme_shop_year_rewrite_rules');
+
+function mytheme_shop_year_query_vars($vars) {
+    $vars[] = 'shop_year';
+    return $vars;
+}
+add_filter('query_vars', 'mytheme_shop_year_query_vars');

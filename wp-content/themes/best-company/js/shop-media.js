@@ -21,7 +21,8 @@ jQuery(function ($) {
     mediaFrame.on("select", function () {
       const attachment = mediaFrame.state().get("selection").first().toJSON();
 
-      $("#shop_image").val(attachment.id);
+      $("#shop-image-id").val(attachment.id);
+      $("#shop-image-removed").val("0");
 
       $("#shop-image-preview").html(
         $("<img>", {
@@ -38,7 +39,8 @@ jQuery(function ($) {
   });
 
   $("#shop-image-remove").on("click", function () {
-    $("#shop_image").val("");
+    $("#shop-image-id").val("");
+    $("#shop-image-removed").val("1");
     $("#shop-image-preview").empty();
   });
 });
