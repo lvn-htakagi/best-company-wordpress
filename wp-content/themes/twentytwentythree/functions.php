@@ -885,6 +885,69 @@ function mytheme_render_shop_organizations_field($post) {
 }
 
 /**
+ * ショップ編集画面に「従業員数(企業概要)」を追加
+ */
+function mytheme_add_shop_employee_field() {
+    add_meta_box(
+        'shop_employee',
+        '従業員数',
+        'mytheme_render_shop_employee_field',
+        'shop',
+        'normal',
+        'default'
+    );
+}
+add_action('add_meta_boxes', 'mytheme_add_shop_employee_field');
+
+/**
+ * 従業員数(企業概要)の入力欄を表示
+ */
+function mytheme_render_shop_employee_field($post) {
+    $employee = get_post_meta($post->ID, '_shop_employee', true);
+
+    wp_nonce_field('mytheme_save_shop_employee', 'mytheme_shop_employee_nonce');
+    ?>
+    <label for="shop_employee">従業員数(企業概要)</label>
+    <input
+        type="text"
+        id="shop_employee"
+        name="shop_employee"
+        style="width: 100%;"
+        value="<?php echo esc_attr($employee); ?>"
+    />
+    <?php
+}
+
+/**
+ * 従業員数(企業概要)を保存
+ */
+function mytheme_save_shop_employee($post_id) {
+    if (
+        !isset($_POST['mytheme_shop_employee_nonce']) ||
+        !wp_verify_nonce(
+            sanitize_text_field(wp_unslash($_POST['mytheme_shop_employee_nonce'])),
+            'mytheme_save_shop_employee'
+        )
+    ) {
+        return;
+    }
+
+    if (!mytheme_can_save_shop($post_id)) {
+        return;
+    }
+
+    $employee = sanitize_text_field(wp_unslash($_POST['shop_employee']));
+
+    if ($employee === '') {
+        delete_post_meta($post_id, '_shop_employee');
+        return;
+    }
+
+    update_post_meta($post_id, '_shop_employee', $employee);
+}
+add_action('save_post', 'mytheme_save_shop_employee');
+
+/**
  * 加盟団体(企業概要)を保存
  */
 function mytheme_save_shop_organizations($post_id) {
@@ -912,6 +975,69 @@ function mytheme_save_shop_organizations($post_id) {
     update_post_meta($post_id, '_shop_organizations', $organizations);
 }
 add_action('save_post', 'mytheme_save_shop_organizations');
+
+/**
+ * ショップ編集画面に「設立年月(企業概要)」を追加
+ */
+function mytheme_add_shop_establishment_field() {
+    add_meta_box(
+        'shop_establishment',
+        '設立年月',
+        'mytheme_render_shop_establishment_field',
+        'shop',
+        'normal',
+        'default'
+    );
+}
+add_action('add_meta_boxes', 'mytheme_add_shop_establishment_field');
+
+/**
+ * 設立年月(企業概要)の入力欄を表示
+ */
+function mytheme_render_shop_establishment_field($post) {
+    $establishment = get_post_meta($post->ID, '_shop_establishment', true);
+
+    wp_nonce_field('mytheme_save_shop_establishment', 'mytheme_shop_establishment_nonce');
+    ?>
+    <label for="shop_establishment">設立年月(企業概要)</label>
+    <input
+        type="text"
+        id="shop_establishment"
+        name="shop_establishment"
+        style="width: 100%;"
+        value="<?php echo esc_attr($establishment); ?>"
+    />
+    <?php
+}
+
+/**
+ * 設立年月(企業概要)を保存
+ */
+function mytheme_save_shop_establishment($post_id) {
+    if (
+        !isset($_POST['mytheme_shop_establishment_nonce']) ||
+        !wp_verify_nonce(
+            sanitize_text_field(wp_unslash($_POST['mytheme_shop_establishment_nonce'])),
+            'mytheme_save_shop_establishment'
+        )
+    ) {
+        return;
+    }
+
+    if (!mytheme_can_save_shop($post_id)) {
+        return;
+    }
+
+    $establishment = sanitize_text_field(wp_unslash($_POST['shop_establishment']));
+
+    if ($establishment === '') {
+        delete_post_meta($post_id, '_shop_establishment');
+        return;
+    }
+
+    update_post_meta($post_id, '_shop_establishment', $establishment);
+}
+add_action('save_post', 'mytheme_save_shop_establishment');
 
 /**
  * ショップ編集画面に「拠点(企業概要)」を追加
