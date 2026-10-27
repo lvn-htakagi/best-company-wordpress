@@ -604,5 +604,251 @@ function mytheme_save_shop_url($post_id) {
 }
 add_action('save_post', 'mytheme_save_shop_url');
 
+/**
+ * ショップ編集画面に「資本金(企業概要)」を追加
+ */
+function mytheme_add_shop_capital_field() {
+    add_meta_box(
+        'shop_capital',
+        '資本金',
+        'mytheme_render_shop_capital_field',
+        'shop',
+        'normal',
+        'default'
+    );
+}
+add_action('add_meta_boxes', 'mytheme_add_shop_capital_field');
 
+/**
+ * 資本金(企業概要)の入力欄を表示
+ */
+function mytheme_render_shop_capital_field($post) {
+    $capital = get_post_meta($post->ID, '_shop_capital', true);
+
+    wp_nonce_field('mytheme_save_shop_capital', 'mytheme_shop_capital_nonce');
+    ?>
+    <label for="shop_capital">資本金(企業概要)</label>
+    <input
+        type="text"
+        id="shop_capital"
+        name="shop_capital"
+        style="width: 100%;"
+        value="<?php echo esc_attr($capital); ?>"
+    />
+    <?php
+}
+
+/**
+ * 資本金(企業概要)を保存
+ */
+function mytheme_save_shop_capital($post_id) {
+    if (
+        !isset($_POST['mytheme_shop_capital_nonce']) ||
+        !wp_verify_nonce(
+            sanitize_text_field(wp_unslash($_POST['mytheme_shop_capital_nonce'])),
+            'mytheme_save_shop_capital'
+        )
+    ) {
+        return;
+    }
+
+    if (!mytheme_can_save_shop($post_id)) {
+        return;
+    }
+
+    $capital = sanitize_text_field(wp_unslash($_POST['shop_capital']));
+
+    if ($capital === '') {
+        delete_post_meta($post_id, '_shop_capital');
+        return;
+    }
+
+    update_post_meta($post_id, '_shop_capital', $capital);
+}
+add_action('save_post', 'mytheme_save_shop_capital');
+
+/**
+ * ショップ編集画面に「売上高(企業概要)」を追加
+ */
+function mytheme_add_shop_net_sales_field() {
+    add_meta_box(
+        'shop_net_sales',
+        '売上高',
+        'mytheme_render_shop_net_sales_field',
+        'shop',
+        'normal',
+        'default'
+    );
+}
+add_action('add_meta_boxes', 'mytheme_add_shop_net_sales_field');
+
+/**
+ * 売上高(企業概要)の入力欄を表示
+ */
+function mytheme_render_shop_net_sales_field($post) {
+    $net_sales = get_post_meta($post->ID, '_shop_net_sales', true);
+
+    wp_nonce_field('mytheme_save_shop_net_sales', 'mytheme_shop_net_sales_nonce');
+    ?>
+    <label for="shop_net_sales">売上高(企業概要)</label>
+    <input
+        type="text"
+        id="shop_net_sales"
+        name="shop_net_sales"
+        style="width: 100%;"
+        value="<?php echo esc_attr($net_sales); ?>"
+    />
+    <?php
+}
+
+/**
+ * 売上高(企業概要)を保存
+ */
+function mytheme_save_shop_net_sales($post_id) {
+    if (
+        !isset($_POST['mytheme_shop_net_sales_nonce']) ||
+        !wp_verify_nonce(
+            sanitize_text_field(wp_unslash($_POST['mytheme_shop_net_sales_nonce'])),
+            'mytheme_save_shop_net_sales'
+        )
+    ) {
+        return;
+    }
+
+    if (!mytheme_can_save_shop($post_id)) {
+        return;
+    }
+
+    $net_sales = sanitize_text_field(wp_unslash($_POST['shop_net_sales']));
+
+    if ($net_sales === '') {
+        delete_post_meta($post_id, '_shop_net_sales');
+        return;
+    }
+
+    update_post_meta($post_id, '_shop_net_sales', $net_sales);
+}
+add_action('save_post', 'mytheme_save_shop_net_sales');
+
+/**
+ * ショップ編集画面に「事業内容(企業概要)」を追加
+ */
+function mytheme_add_shop_business_content_field() {
+    add_meta_box(
+        'shop_business_content',
+        '事業内容',
+        'mytheme_render_shop_business_content_field',
+        'shop',
+        'normal',
+        'default'
+    );
+}
+add_action('add_meta_boxes', 'mytheme_add_shop_business_content_field');
+
+/**
+ * 事業内容(企業概要)の入力欄を表示
+ */
+function mytheme_render_shop_business_content_field($post) {
+    $business_content = get_post_meta($post->ID, '_shop_business_content', true);
+
+    wp_nonce_field('mytheme_save_shop_business_content', 'mytheme_shop_business_content_nonce');
+    ?>
+    <label for="shop_business_content">事業内容(企業概要)</label>
+    <textarea
+        id="shop_business_content"
+        name="shop_business_content"
+        style="width: 100%;"
+    ><?php echo esc_textarea($business_content); ?></textarea>
+    <?php
+}
+
+/**
+ * 事業内容(企業概要)を保存
+ */
+function mytheme_save_shop_business_content($post_id) {
+    if (
+        !isset($_POST['mytheme_shop_business_content_nonce']) ||
+        !wp_verify_nonce(
+            sanitize_text_field(wp_unslash($_POST['mytheme_shop_business_content_nonce'])),
+            'mytheme_save_shop_business_content'
+        )
+    ) {
+        return;
+    }
+
+    if (!mytheme_can_save_shop($post_id)) {
+        return;
+    }
+
+    $business_content = sanitize_text_field(wp_unslash($_POST['shop_business_content']));
+
+    if ($business_content === '') {
+        delete_post_meta($post_id, '_shop_business_content');
+        return;
+    }
+
+    update_post_meta($post_id, '_shop_business_content', $business_content);
+}
+add_action('save_post', 'mytheme_save_shop_business_content');
+
+/**
+ * ショップ編集画面に「許認可・免許番号(企業概要)」を追加
+ */
+function mytheme_add_shop_license_number_field() {
+    add_meta_box(
+        'shop_license_number',
+        '許認可・免許番号',
+        'mytheme_render_shop_license_number_field',
+        'shop',
+        'normal',
+        'default'
+    );
+}
+add_action('add_meta_boxes', 'mytheme_add_shop_license_number_field');
+
+/**
+ * 許認可・免許番号(企業概要)の入力欄を表示
+ */
+function mytheme_render_shop_license_number_field($post) {
+    $license_number = get_post_meta($post->ID, '_shop_license_number', true);
+
+    wp_nonce_field('mytheme_save_shop_license_number', 'mytheme_shop_license_number_nonce');
+    ?>
+    <label for="shop_license_number">許認可・免許番号(企業概要)</label>
+    <textarea
+        id="shop_license_number"
+        name="shop_license_number"
+        style="width: 100%;"
+    ><?php echo esc_textarea($license_number); ?></textarea>
+    <?php
+}
+
+/**
+ * 許認可・免許番号(企業概要)を保存
+ */
+function mytheme_save_shop_license_number($post_id) {
+    if (
+        !isset($_POST['mytheme_shop_license_number_nonce']) ||
+        !wp_verify_nonce(
+            sanitize_text_field(wp_unslash($_POST['mytheme_shop_license_number_nonce'])),
+            'mytheme_save_shop_license_number'
+        )
+    ) {
+        return;
+    }
+
+    if (!mytheme_can_save_shop($post_id)) {
+        return;
+    }
+
+    $license_number = sanitize_text_field(wp_unslash($_POST['shop_license_number']));
+
+    if ($license_number === '') {
+        delete_post_meta($post_id, '_shop_license_number');
+        return;
+    }
+
+    update_post_meta($post_id, '_shop_license_number', $license_number);
+}
+add_action('save_post', 'mytheme_save_shop_license_number');
 
