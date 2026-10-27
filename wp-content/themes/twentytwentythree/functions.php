@@ -29,6 +29,145 @@ function mytheme_remove_shop_editor_support() {
 add_action('init', 'mytheme_remove_shop_editor_support', 20);
 
 /**
+ * ショップ編集画面に「名前」を追加
+ */
+function mytheme_add_shop_name_field() {
+    add_meta_box(
+        'shop_name',
+        '名前',
+        'mytheme_render_shop_name_field',
+        'shop',
+        'normal',
+        'default'
+    );
+}
+add_action('add_meta_boxes', 'mytheme_add_shop_name_field');
+
+/**
+ * 名前の入力欄を表示
+ */
+function mytheme_render_shop_name_field($post) {
+    $name = get_post_meta($post->ID, '_shop_name', true);
+
+    wp_nonce_field('mytheme_save_shop_name', 'mytheme_shop_name_nonce');
+    ?>
+    <label for="shop_name">名前</label>
+    <input
+        type="text"
+        id="shop_name"
+        name="shop_name"
+        style="width: 100%;"
+        value="<?php echo esc_attr($name); ?>"
+    />
+    <?php
+}
+
+/**
+ * 名前を保存
+ */
+function mytheme_save_shop_name($post_id) {
+    if (
+        !isset($_POST['mytheme_shop_name_nonce']) ||
+        !wp_verify_nonce(
+            sanitize_text_field(wp_unslash($_POST['mytheme_shop_name_nonce'])),
+            'mytheme_save_shop_name'
+        )
+    ) {
+        return;
+    }
+
+    if (!mytheme_can_save_shop($post_id)) {
+        return;
+    }
+
+    $name = sanitize_text_field(wp_unslash($_POST['shop_name']));
+
+    if ($name === '') {
+        delete_post_meta($post_id, '_shop_name');
+        return;
+    }
+
+    update_post_meta($post_id, '_shop_name', $name);
+}
+add_action('save_post', 'mytheme_save_shop_name');
+
+/**
+ * ショップ編集画面に「詳細」を追加
+ */
+function mytheme_add_shop_detail_field() {
+    add_meta_box(
+        'shop_detail',
+        '詳細',
+        'mytheme_render_shop_detail_field',
+        'shop',
+        'normal',
+        'default'
+    );
+}
+add_action('add_meta_boxes', 'mytheme_add_shop_detail_field');
+
+/**
+ * 詳細の入力欄を表示
+ */
+function mytheme_render_shop_detail_field($post) {
+    $comment = get_post_meta($post->ID, '_shop_detail', true);
+
+    wp_nonce_field('mytheme_save_shop_detail', 'mytheme_shop_detail_nonce');
+    ?>
+    <label for="shop_detail">詳細</label>
+    <textarea
+        id="shop_detail"
+        name="shop_detail"
+        style="width: 100%;"
+    ><?php echo esc_textarea($comment); ?></textarea>
+    <?php
+}
+
+/**
+ * 詳細を保存
+ */
+function mytheme_save_shop_detail($post_id) {
+    if (
+        !isset($_POST['mytheme_shop_detail_nonce']) ||
+        !wp_verify_nonce(
+            sanitize_text_field(wp_unslash($_POST['mytheme_shop_detail_nonce'])),
+            'mytheme_save_shop_detail'
+        )
+    ) {
+        return;
+    }
+
+    if (!mytheme_can_save_shop($post_id)) {
+        return;
+    }
+
+    $comment = sanitize_text_field(wp_unslash($_POST['shop_detail']));
+
+    if ($comment === '') {
+        delete_post_meta($post_id, '_shop_detail');
+        return;
+    }
+
+    update_post_meta($post_id, '_shop_detail', $comment);
+}
+add_action('save_post', 'mytheme_save_shop_detail');
+
+/**
+ * ショップ編集画面に「企業紹介」を追加
+ */
+function mytheme_add_shop_introduction_field() {
+    add_meta_box(
+        'shop_introduction',
+        '企業紹介',
+        'mytheme_render_shop_introduction_field',
+        'shop',
+        'normal',
+        'default'
+    );
+}
+add_action('add_meta_boxes', 'mytheme_add_shop_introduction_field');
+
+/**
  * ショップ編集画面に「年」を追加
  */
 function mytheme_add_shop_year_field() {
