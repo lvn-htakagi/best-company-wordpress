@@ -153,19 +153,107 @@ function mytheme_save_shop_detail($post_id) {
 add_action('save_post', 'mytheme_save_shop_detail');
 
 /**
- * ショップ編集画面に「企業紹介」を追加
+ * ショップ編集画面に「画像」を追加
  */
-function mytheme_add_shop_introduction_field() {
+function mytheme_add_shop_image_field() {
     add_meta_box(
-        'shop_introduction',
-        '企業紹介',
-        'mytheme_render_shop_introduction_field',
+        'shop_image',
+        '画像',
+        'mytheme_render_shop_image_field',
         'shop',
         'normal',
         'default'
     );
 }
-add_action('add_meta_boxes', 'mytheme_add_shop_introduction_field');
+add_action('add_meta_boxes', 'mytheme_add_shop_image_field');
+
+/**
+ * 画像の入力欄を表示
+ */
+function mytheme_render_shop_image_field($post) {
+    $image_id = get_post_meta($post->ID, '_shop_image', true);
+    $image_url = $image_id ? wp_get_attachment_image_url($image_id, 'medium') : '';
+
+    wp_nonce_field(
+        'mytheme_save_shop_image',
+        'mytheme_shop_image_nonce'
+    );
+
+    echo '<div id="shop-image-preview">';
+
+    if ($image_url) {
+        echo '<img src="' . esc_url($image_url) . '" style="max-width: 300px; height: auto;">';
+    }
+
+    echo '</div>';
+
+    echo '<input type="hidden" id="shop_image" name="shop_image" value="' . esc_attr($image_id) . '">';
+
+    echo '<button type="button" class="button" id="shop-image-select">画像を選択</button> ';
+    echo '<button type="button" class="button" id="shop-image-remove">画像を削除</button>';
+}
+
+/**
+ * ショップ編集画面でメディアライブラリを読み込む
+ */
+function mytheme_enqueue_shop_media($hook) {
+    if (!in_array($hook, ['post.php', 'post-new.php'], true)) {
+        return;
+    }
+
+    $screen = get_current_screen();
+
+    if (!$screen || $screen->post_type !== 'shop') {
+        return;
+    }
+
+    wp_enqueue_media();
+
+    wp_enqueue_script(
+        'mytheme-shop-media',
+        get_theme_file_uri('/js/shop-media.js'),
+        ['jquery'],
+        null,
+        true
+    );
+}
+add_action('admin_enqueue_scripts', 'mytheme_enqueue_shop_media');
+
+/**
+ * ショップ画像を保存
+ */
+function mytheme_save_shop_image($post_id) {
+    if (
+        !isset($_POST['mytheme_shop_image_nonce']) ||
+        !wp_verify_nonce(
+            sanitize_text_field(wp_unslash($_POST['mytheme_shop_image_nonce'])),
+            'mytheme_save_shop_image'
+        )
+    ) {
+        return;
+    }
+
+    if (!mytheme_can_save_shop($post_id)) {
+        return;
+    }
+
+    if (!isset($_POST['shop_image'])) {
+        return;
+    }
+
+    $image_id = absint($_POST['shop_image']);
+
+    if ($image_id && !wp_attachment_is_image($image_id)) {
+        return;
+    }
+
+    if ($image_id) {
+        update_post_meta($post_id, '_shop_image', $image_id);
+    } else {
+        delete_post_meta($post_id, '_shop_image');
+    }
+}
+add_action('save_post_shop', 'mytheme_save_shop_image');
 
 /**
  * ショップ編集画面に「年」を追加
