@@ -89,7 +89,7 @@ function mytheme_save_shop_name($post_id) {
 
     update_post_meta($post_id, '_shop_name', $name);
 }
-add_action('save_post', 'mytheme_save_shop_name');
+add_action('save_post_shop', 'mytheme_save_shop_name');
 
 /**
  * ショップ編集画面に「詳細」を追加
@@ -150,7 +150,7 @@ function mytheme_save_shop_detail($post_id) {
 
     update_post_meta($post_id, '_shop_detail', $comment);
 }
-add_action('save_post', 'mytheme_save_shop_detail');
+add_action('save_post_shop', 'mytheme_save_shop_detail');
 
 /**
  * ショップ編集画面に「画像」を追加
@@ -256,6 +256,101 @@ function mytheme_save_shop_image($post_id) {
 add_action('save_post_shop', 'mytheme_save_shop_image');
 
 /**
+ * ショップ編集画面に「都道府県」を追加
+ */
+function mytheme_add_shop_prefecture_field() {
+    add_meta_box(
+        'shop_prefecture',
+        '都道府県',
+        'mytheme_render_shop_prefecture_field',
+        'shop',
+        'normal',
+        'default'
+    );
+}
+add_action('add_meta_boxes', 'mytheme_add_shop_prefecture_field');
+
+/**
+ * 都道府県の選択肢
+ */
+function mytheme_get_prefectures() {
+    return [
+        1 => '北海道',
+        2 => '青森県',
+        3 => '岩手県',
+        4 => '宮城県',
+        5 => '秋田県',
+        6 => '山形県',
+        7 => '福島県',
+    ];
+}
+
+/**
+ * 都道府県の入力欄を表示
+ */
+function mytheme_render_shop_prefecture_field($post) {
+    $prefecture = get_post_meta($post->ID, '_shop_prefecture', true);
+
+    wp_nonce_field(
+        'mytheme_save_shop_prefecture',
+        'mytheme_shop_prefecture_nonce'
+    );
+
+    echo '<select id="shop_prefecture" name="shop_prefecture">';
+    echo '<option value="">選択してください</option>';
+
+    foreach (mytheme_get_prefectures() as $key => $name) {
+        echo '<option value="' . esc_attr($key) . '"'
+            . selected($prefecture, $key, false) . '>';
+        echo esc_html($name);
+        echo '</option>';
+    }
+
+    echo '</select>';
+}
+
+/**
+ * 都道府県を保存
+ */
+function mytheme_save_shop_prefecture($post_id) {
+    if (
+        !isset($_POST['mytheme_shop_prefecture_nonce']) ||
+        !wp_verify_nonce(
+            sanitize_text_field(
+                wp_unslash($_POST['mytheme_shop_prefecture_nonce'])
+            ),
+            'mytheme_save_shop_prefecture'
+        )
+    ) {
+        return;
+    }
+
+    if (!mytheme_can_save_shop($post_id)) {
+        return;
+    }
+
+    if (!isset($_POST['shop_prefecture']) || absint($_POST['shop_prefecture']) === 0) {
+        return;
+    }
+
+    $prefecture = absint($_POST['shop_prefecture']);
+
+    if (
+        $prefecture !== 0 &&
+        !array_key_exists($prefecture, mytheme_get_prefectures())
+    ) {
+        return;
+    }
+
+    if ($prefecture === 0) {
+        delete_post_meta($post_id, '_shop_prefecture');
+    } else {
+        update_post_meta($post_id, '_shop_prefecture', $prefecture);
+    }
+}
+add_action('save_post_shop', 'mytheme_save_shop_prefecture');
+
+/**
  * ショップ編集画面に「年」を追加
  */
 function mytheme_add_shop_year_field() {
@@ -327,7 +422,7 @@ function mytheme_save_shop_year($post_id) {
 
     update_post_meta($post_id, '_shop_year', $year);
 }
-add_action('save_post', 'mytheme_save_shop_year');
+add_action('save_post_shop', 'mytheme_save_shop_year');
 
 /**
  * ショップ編集画面に「編集部コメント」を追加
@@ -388,7 +483,7 @@ function mytheme_save_shop_comment($post_id) {
 
     update_post_meta($post_id, '_shop_comment', $comment);
 }
-add_action('save_post', 'mytheme_save_shop_comment');
+add_action('save_post_shop', 'mytheme_save_shop_comment');
 
 /**
  * ショップ編集画面に「企業紹介」を追加
@@ -449,7 +544,7 @@ function mytheme_save_shop_introduction($post_id) {
 
     update_post_meta($post_id, '_shop_introduction', $introduction);
 }
-add_action('save_post', 'mytheme_save_shop_introduction');
+add_action('save_post_shop', 'mytheme_save_shop_introduction');
 
 /**
  * ショップ編集画面に「インタビュー」を追加
@@ -510,7 +605,7 @@ function mytheme_save_shop_interview($post_id) {
 
     update_post_meta($post_id, '_shop_interview', $interview);
 }
-add_action('save_post', 'mytheme_save_shop_interview');
+add_action('save_post_shop', 'mytheme_save_shop_interview');
 
 /**
  * ショップ編集画面に「会社名(企業概要)」を追加
@@ -573,7 +668,7 @@ function mytheme_save_shop_company_name($post_id) {
 
     update_post_meta($post_id, '_shop_company_name', $company_name);
 }
-add_action('save_post', 'mytheme_save_shop_company_name');
+add_action('save_post_shop', 'mytheme_save_shop_company_name');
 
 /**
  * ショップ編集画面に「所在地(企業概要)」を追加
@@ -636,7 +731,7 @@ function mytheme_save_shop_address($post_id) {
 
     update_post_meta($post_id, '_shop_address', $address);
 }
-add_action('save_post', 'mytheme_save_shop_address');
+add_action('save_post_shop', 'mytheme_save_shop_address');
 
 /**
  * ショップ編集画面に「電話番号(企業概要)」を追加
@@ -703,7 +798,7 @@ function mytheme_save_shop_tel($post_id) {
 
     update_post_meta($post_id, '_shop_tel', $tel);
 }
-add_action('save_post', 'mytheme_save_shop_tel');
+add_action('save_post_shop', 'mytheme_save_shop_tel');
 
 /**
  * ショップ編集画面に「FAX番号(企業概要)」を追加
@@ -766,7 +861,7 @@ function mytheme_save_shop_fax($post_id) {
 
     update_post_meta($post_id, '_shop_fax', $fax);
 }
-add_action('save_post', 'mytheme_save_shop_fax');
+add_action('save_post_shop', 'mytheme_save_shop_fax');
 
 /**
  * ショップ編集画面に「URL(企業概要)」を追加
@@ -829,7 +924,7 @@ function mytheme_save_shop_url($post_id) {
 
     update_post_meta($post_id, '_shop_url', $url);
 }
-add_action('save_post', 'mytheme_save_shop_url');
+add_action('save_post_shop', 'mytheme_save_shop_url');
 
 /**
  * ショップ編集画面に「資本金(企業概要)」を追加
@@ -892,7 +987,7 @@ function mytheme_save_shop_capital($post_id) {
 
     update_post_meta($post_id, '_shop_capital', $capital);
 }
-add_action('save_post', 'mytheme_save_shop_capital');
+add_action('save_post_shop', 'mytheme_save_shop_capital');
 
 /**
  * ショップ編集画面に「売上高(企業概要)」を追加
@@ -955,7 +1050,7 @@ function mytheme_save_shop_net_sales($post_id) {
 
     update_post_meta($post_id, '_shop_net_sales', $net_sales);
 }
-add_action('save_post', 'mytheme_save_shop_net_sales');
+add_action('save_post_shop', 'mytheme_save_shop_net_sales');
 
 /**
  * ショップ編集画面に「事業内容(企業概要)」を追加
@@ -1016,7 +1111,7 @@ function mytheme_save_shop_business_content($post_id) {
 
     update_post_meta($post_id, '_shop_business_content', $business_content);
 }
-add_action('save_post', 'mytheme_save_shop_business_content');
+add_action('save_post_shop', 'mytheme_save_shop_business_content');
 
 /**
  * ショップ編集画面に「許認可・免許番号(企業概要)」を追加
@@ -1077,7 +1172,7 @@ function mytheme_save_shop_license_number($post_id) {
 
     update_post_meta($post_id, '_shop_license_number', $license_number);
 }
-add_action('save_post', 'mytheme_save_shop_license_number');
+add_action('save_post_shop', 'mytheme_save_shop_license_number');
 
 /**
  * ショップ編集画面に「加盟団体(企業概要)」を追加
@@ -1144,7 +1239,7 @@ function mytheme_render_shop_employee_field($post) {
     />
     <?php
 }
-
+add_action('save_post_shop', 'mytheme_save_shop_organizations');
 /**
  * 従業員数(企業概要)を保存
  */
@@ -1172,7 +1267,7 @@ function mytheme_save_shop_employee($post_id) {
 
     update_post_meta($post_id, '_shop_employee', $employee);
 }
-add_action('save_post', 'mytheme_save_shop_employee');
+add_action('save_post_shop', 'mytheme_save_shop_employee');
 
 /**
  * 加盟団体(企業概要)を保存
@@ -1201,7 +1296,7 @@ function mytheme_save_shop_organizations($post_id) {
 
     update_post_meta($post_id, '_shop_organizations', $organizations);
 }
-add_action('save_post', 'mytheme_save_shop_organizations');
+add_action('save_post_shop', 'mytheme_save_shop_organizations');
 
 /**
  * ショップ編集画面に「設立年月(企業概要)」を追加
@@ -1264,7 +1359,7 @@ function mytheme_save_shop_establishment($post_id) {
 
     update_post_meta($post_id, '_shop_establishment', $establishment);
 }
-add_action('save_post', 'mytheme_save_shop_establishment');
+add_action('save_post_shop', 'mytheme_save_shop_establishment');
 
 /**
  * ショップ編集画面に「拠点(企業概要)」を追加
@@ -1325,7 +1420,7 @@ function mytheme_save_shop_base($post_id) {
 
     update_post_meta($post_id, '_shop_base', $base);
 }
-add_action('save_post', 'mytheme_save_shop_base');
+add_action('save_post_shop', 'mytheme_save_shop_base');
 
 /**
  * ショップ編集画面に「関係会社(企業概要)」を追加
@@ -1386,4 +1481,66 @@ function mytheme_save_shop_relationship($post_id) {
 
     update_post_meta($post_id, '_shop_relationship', $relationship);
 }
-add_action('save_post', 'mytheme_save_shop_relationship');
+add_action('save_post_shop', 'mytheme_save_shop_relationship');
+
+/**
+ * ショップ一覧の列を設定
+ */
+function mytheme_shop_admin_columns($columns) {
+    $new_columns = [];
+
+    // ショップ名を先頭にする
+    $new_columns['shop_name'] = 'ショップ名';
+
+    // 既存の列を追加（タイトル列は除外）
+    foreach ($columns as $key => $label) {
+        if ($key !== 'title') {
+            $new_columns[$key] = $label;
+        }
+    }
+
+    return $new_columns;
+}
+add_filter('manage_shop_posts_columns', 'mytheme_shop_admin_columns');
+
+/**
+ * ショップ一覧にショップ名を表示
+ */
+function mytheme_shop_admin_column_content($column, $post_id) {
+    if ($column !== 'shop_name') {
+        return;
+    }
+
+    $shop_name = get_post_meta($post_id, '_shop_name', true);
+
+    echo esc_html($shop_name ?: '（ショップ名未入力）');
+}
+add_action('manage_shop_posts_custom_column', 'mytheme_shop_admin_column_content', 10, 2);
+
+/**
+ * ショップ名の並び替えを有効にする
+ */
+function mytheme_shop_sortable_columns($columns) {
+    $columns['shop_name'] = 'shop_name';
+    return $columns;
+}
+add_filter('manage_edit-shop_sortable_columns', 'mytheme_shop_sortable_columns');
+
+/**
+ * ショップ名で並び替える
+ */
+function mytheme_shop_orderby($query) {
+    if (!is_admin() || !$query->is_main_query()) {
+        return;
+    }
+
+    if ($query->get('post_type') !== 'shop') {
+        return;
+    }
+
+    if ($query->get('orderby') === 'shop_name') {
+        $query->set('meta_key', '_shop_name');
+        $query->set('orderby', 'meta_value');
+    }
+}
+add_action('pre_get_posts', 'mytheme_shop_orderby');
