@@ -21,12 +21,39 @@ function mytheme_register_shop_post_type() {
 }
 add_action('init', 'mytheme_register_shop_post_type');
 
+/**
+ * 沿革のカスタム投稿タイプを登録
+ */
+function mytheme_register_shop_history_post_type() {
+    register_post_type('shop_history', [
+        'labels' => [
+            'name'          => '沿革',
+            'singular_name' => '沿革',
+            'add_new_item'  => '沿革を追加',
+            'edit_item'     => '沿革を編集',
+        ],
+        'public'       => false,
+        'show_ui'      => true,
+        'show_in_rest' => false,
+        'menu_icon'    => 'dashicons-backup',
+        'supports'     => [],
+    ]);
+}
+add_action('init', 'mytheme_register_shop_history_post_type');
+
 function mytheme_remove_shop_editor_support() {
     remove_post_type_support('shop', 'title');
     remove_post_type_support('shop', 'editor');
     remove_post_type_support('shop', 'thumbnail');
 }
 add_action('init', 'mytheme_remove_shop_editor_support', 20);
+
+function mytheme_remove_shop_history_editor_support() {
+    remove_post_type_support('shop_history', 'title');
+    remove_post_type_support('shop_history', 'editor');
+    remove_post_type_support('shop_history', 'thumbnail');
+}
+add_action('init', 'mytheme_remove_shop_history_editor_support', 20);
 
 /**
  * ショップ編集画面に「名前」を追加
@@ -1482,6 +1509,272 @@ function mytheme_save_shop_relationship($post_id) {
     update_post_meta($post_id, '_shop_relationship', $relationship);
 }
 add_action('save_post_shop', 'mytheme_save_shop_relationship');
+/**
+ * 沿革編集画面に「年」を追加
+ */
+function mytheme_add_history_year_field() {
+    add_meta_box(
+        'history_year',
+        '年',
+        'mytheme_render_history_year_field',
+        'shop_history',
+        'normal',
+        'default'
+    );
+}
+add_action('add_meta_boxes', 'mytheme_add_history_year_field');
+
+/**
+ * 年の選択肢
+ */
+function mytheme_get_history_years() {
+    $year = [];
+    for($i=1900;$i<=2036;$i++){
+        $year[$i] = $i . "年";
+    }
+    return $year;
+}
+
+/**
+ * 年の入力欄を表示
+ */
+function mytheme_render_history_year_field($post) {
+    $history_year = get_post_meta($post->ID, '_shop_history_year', true);
+
+    wp_nonce_field(
+        'mytheme_save_history_year',
+        'mytheme_history_year_nonce'
+    );
+
+    echo '<select id="history_year" name="history_year">';
+    echo '<option value="">選択してください</option>';
+
+    foreach (mytheme_get_history_years() as $key => $name) {
+        echo '<option value="' . esc_attr($key) . '"'
+            . selected((string) $history_year, (string) $key, false) . '>';
+        echo esc_html($name);
+        echo '</option>';
+    }
+
+    echo '</select>';
+}
+
+/**
+ * 年を保存
+ */
+function mytheme_save_history_year($post_id) {
+    if (
+        !isset($_POST['mytheme_history_year_nonce']) ||
+        !wp_verify_nonce(
+            sanitize_text_field(
+                wp_unslash($_POST['mytheme_history_year_nonce'])
+            ),
+            'mytheme_save_history_year'
+        )
+    ) {
+        return;
+    }
+
+    if (
+        defined('DOING_AUTOSAVE') && DOING_AUTOSAVE
+    ) {
+        return;
+    }
+
+    if (
+        get_post_type($post_id) !== 'shop_history' ||
+        !current_user_can('edit_post', $post_id)
+    ) {
+        return;
+    }
+
+    if (!isset($_POST['history_year'])) {
+        return;
+    }
+
+    $history_year = absint($_POST['history_year']);
+
+    if (
+        $history_year !== 0 &&
+        !array_key_exists($history_year, mytheme_get_history_years())
+    ) {
+        return;
+    }
+
+    if ($history_year === 0) {
+        delete_post_meta($post_id, '_shop_history_year');
+    } else {
+        update_post_meta($post_id, '_shop_history_year', $history_year);
+    }
+}
+add_action('save_post_shop_history', 'mytheme_save_history_year');
+
+/**
+ * 沿革編集画面に「月」を追加
+ */
+function mytheme_add_history_month_field() {
+    add_meta_box(
+        'history_month',
+        '月',
+        'mytheme_render_history_month_field',
+        'shop_history',
+        'normal',
+        'default'
+    );
+}
+add_action('add_meta_boxes', 'mytheme_add_history_month_field');
+
+/**
+ * 月の選択肢
+ */
+function mytheme_get_history_months() {
+    return [
+        1 => '1月',
+        2 => '2月',
+        3 => '3月',
+        4 => '4月',
+        5 => '5月',
+        6 => '6月',
+        7 => '7月',
+        8 => '8月',
+        9 => '9月',
+        10 => '10月',
+        11 => '11月',
+        12 => '12月',
+    ];
+}
+
+/**
+ * 月の入力欄を表示
+ */
+function mytheme_render_history_month_field($post) {
+    $history_month = get_post_meta($post->ID, '_shop_history_month', true);
+
+    wp_nonce_field(
+        'mytheme_save_history_month',
+        'mytheme_history_month_nonce'
+    );
+
+    echo '<select id="history_month" name="history_month">';
+    echo '<option value="">選択してください</option>';
+
+    foreach (mytheme_get_history_months() as $key => $name) {
+        echo '<option value="' . esc_attr($key) . '"'
+            . selected((string) $history_month, (string) $key, false) . '>';
+        echo esc_html($name);
+        echo '</option>';
+    }
+
+    echo '</select>';
+}
+
+/**
+ * 月を保存
+ */
+function mytheme_save_history_month($post_id) {
+    if (
+        !isset($_POST['mytheme_history_month_nonce']) ||
+        !wp_verify_nonce(
+            sanitize_text_field(
+                wp_unslash($_POST['mytheme_history_month_nonce'])
+            ),
+            'mytheme_save_history_month'
+        )
+    ) {
+        return;
+    }
+
+    if (
+        defined('DOING_AUTOSAVE') && DOING_AUTOSAVE
+    ) {
+        return;
+    }
+
+    if (
+        get_post_type($post_id) !== 'shop_history' ||
+        !current_user_can('edit_post', $post_id)
+    ) {
+        return;
+    }
+
+    if (!isset($_POST['history_month'])) {
+        return;
+    }
+
+    $history_month = absint($_POST['history_month']);
+
+    if (
+        $history_month !== 0 &&
+        !array_key_exists($history_month, mytheme_get_history_months())
+    ) {
+        return;
+    }
+
+    if ($history_month === 0) {
+        delete_post_meta($post_id, '_shop_history_month');
+    } else {
+        update_post_meta($post_id, '_shop_history_month', $history_month);
+    }
+}
+add_action('save_post_shop_history', 'mytheme_save_history_month');
+
+/**
+ * 沿革編集画面に「沿革」を追加
+ */
+function mytheme_add_history_detail_field() {
+    add_meta_box(
+        'history_detail',
+        '沿革',
+        'mytheme_render_history_detail_field',
+        'shop_history',
+        'normal',
+        'default'
+    );
+}
+add_action('add_meta_boxes', 'mytheme_add_history_detail_field');
+
+/**
+ * 沿革の入力欄を表示
+ */
+function mytheme_render_history_detail_field($post) {
+    $detail = get_post_meta($post->ID, '_shop_history_detail', true);
+
+    wp_nonce_field('mytheme_save_history_detail', 'mytheme_history_detail_nonce');
+    ?>
+    <input
+        type="text"
+        id="history_detail"
+        name="history_detail"
+        style="width: 100%;"
+        value="<?php echo esc_attr($detail); ?>"
+    />
+    <?php
+}
+
+/**
+ * 沿革を保存
+ */
+function mytheme_save_history_detail($post_id) {
+    if (
+        !isset($_POST['mytheme_history_detail_nonce']) ||
+        !wp_verify_nonce(
+            sanitize_text_field(wp_unslash($_POST['mytheme_history_detail_nonce'])),
+            'mytheme_save_history_detail'
+        )
+    ) {
+        return;
+    }
+
+    $detail = sanitize_textarea_field(wp_unslash($_POST['history_detail']));
+
+    if ($detail === '') {
+        delete_post_meta($post_id, '_shop_history_detail');
+        return;
+    }
+
+    update_post_meta($post_id, '_shop_history_detail', $detail);
+}
+add_action('save_post_shop_history', 'mytheme_save_history_detail');
 
 /**
  * ショップ一覧の列を設定
