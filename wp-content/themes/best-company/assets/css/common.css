@@ -407,6 +407,27 @@ header.pc {
   width: 1024px;
   margin: 0 auto;
 }
+
+#mainV_past {
+  text-align: center;
+  background-color: #000;
+  position: relative;
+}
+#pastTtl {
+  font-size: 26px;
+  text-align: center;
+  color: #fff;
+  width: 20em;
+  text-shadow: 0 0 4px #000;
+  letter-spacing: 0.1em;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  line-height: 150px;
+}
+
 footer {
   text-align: center;
   padding: 10px 20px;

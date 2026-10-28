@@ -1,6 +1,9 @@
 <?php
 require_once get_theme_file_path('/inc/save-field.php');
 
+define('LVN_MATCH_URL', 'https://www.lvnmatch.com');
+define('BEST_COMPANY_URL', LVN_MATCH_URL . '/best/');
+
 function mytheme_register_shop_post_type() {
     register_post_type('shop', [
         'labels' => [

@@ -52,9 +52,37 @@
 </header>
 
 <div id="headContents">
-    <?php
-    // ページ固有のヘッダーコンテンツが必要な場合に使用
-    ?>
+    <h1 id="siteLogo">
+        <a href="<?php echo esc_url(BEST_COMPANY_URL); ?>"><img src="<?php echo esc_url(get_theme_file_uri('/assets/images/logoHeader.png')); ?>" alt="" /></a>
+        <?php if (get_query_var('shop_year') != date('Y')) : ?>
+            <span class="year-number"><?php echo get_query_var('shop_year'); ?></span>
+        <?php endif; ?>
+    </h1>
+    <?php if (get_query_var('shop_year') == date('Y')) : ?>
+        <div class="navigation">
+            <ul>
+                <li><a class="mincho" href="#" class="current">ベスト不動産<br class="sp">カンパニー</a></li>
+                <li><a class="mincho" href="#">審査基準に<br class="sp">ついて</a></li>
+            </ul>
+        </div>
+        <div id="mainV">
+            <img class="pc" src="<?php echo esc_url(get_theme_file_uri('/assets/images/best/mainV_' . date('Y') . '_pc.jpg')); ?>" alt="ベスト不動産カンパニーとは" />
+            <img class="sp" src="<?php echo esc_url(get_theme_file_uri('/assets/images/best/mainV_' . date('Y') . '_sp.jpg')); ?>" alt="ベスト不動産カンパニー認定マーク" />
+        </div>
+        <div id="about" class="sp">
+            <p class="mincho">ベスト不動産カンパニーとは</p>
+            <p class="mincho">
+                ベスト不動産カンパニーとは、厳正な審査のもとリビンマッチが認定する地域を代表する不動産会社です。<br>
+                経営者の資質、地域における確固たる実績、挑戦と成長などの審査を経て、各都道府県において最大3社まで認定されます。
+            </p>
+        </div>
+    <?php else : ?>
+        <div id="mainV_past">
+            <img class="pc" src="<?php echo esc_url(get_theme_file_uri('/assets/images/best/mainV_pastpage_pc.jpg')); ?>" alt="ベスト不動産カンパニー一覧">
+            <img class="sp" src="<?php echo esc_url(get_theme_file_uri('/assets/images/best/mainV_pastpage_sp.jpg')); ?>" alt="ベスト不動産カンパニー一覧">
+            <p id="pastTtl" class="mincho"><?php echo get_query_var('shop_year'); ?>年ベスト不動産カンパニー一覧</p>
+        </div>
+    <?php endif; ?>
 </div>
 
 <div id="contents" class="clearfix">
