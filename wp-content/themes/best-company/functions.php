@@ -2007,3 +2007,33 @@ function mytheme_enqueue_shop_single_styles() {
     }
 }
 add_action('wp_enqueue_scripts', 'mytheme_enqueue_shop_single_styles');
+
+function mytheme_enqueue_lvn_styles() {
+    $css_path = get_theme_file_path('/assets/css/common.css');
+
+    if (file_exists($css_path)) {
+        wp_enqueue_style(
+            'mytheme-lvn-common',
+            get_theme_file_uri('/assets/css/common.css'),
+            [],
+            filemtime($css_path)
+        );
+    }
+}
+add_action('wp_enqueue_scripts', 'mytheme_enqueue_lvn_styles');
+
+function mytheme_add_google_tag_manager() {
+    ?>
+    <!-- Google Tag Manager -->
+    <script>
+    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;
+    f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-WTRGTJP');
+    </script>
+    <!-- End Google Tag Manager -->
+    <?php
+}
+add_action('wp_head', 'mytheme_add_google_tag_manager', 1);

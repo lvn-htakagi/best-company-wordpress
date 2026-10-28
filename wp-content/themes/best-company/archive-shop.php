@@ -9,6 +9,8 @@ wp_enqueue_style(
 
 get_header();
 
+$year = get_query_var('shop_year');
+
 // 公開済みショップをすべて取得（年・地域の条件なし）
 $shops_query = new WP_Query([
     'post_type'      => 'shop',
@@ -16,6 +18,13 @@ $shops_query = new WP_Query([
     'posts_per_page' => -1,
     'orderby'        => 'date',
     'order'          => 'ASC',
+    'meta_query'     => [
+        [
+            'key'     => '_shop_year',
+            'value'   => $year,
+            'compare' => '=',
+        ],
+    ],
 ]);
 
 $prefecture_names = [
