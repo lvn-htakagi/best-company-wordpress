@@ -2025,6 +2025,39 @@ function mytheme_enqueue_lvn_styles() {
 }
 add_action('wp_enqueue_scripts', 'mytheme_enqueue_lvn_styles');
 
+function mytheme_enqueue_fadein_script() {
+    if (get_query_var('shop_year') !== '') {
+        $js_path = get_theme_file_path('/assets/js/fadeIn.js');
+
+        if (file_exists($js_path)) {
+            wp_enqueue_script(
+                'mytheme-fadein',
+                get_theme_file_uri('/assets/js/fadeIn.js'),
+                ['jquery'],
+                filemtime($js_path),
+                true
+            );
+        }
+    }
+}
+add_action('wp_enqueue_scripts', 'mytheme_enqueue_fadein_script');
+
+function mytheme_enqueue_shop_archive_styles() {
+    if (get_query_var('shop_year') !== '') {
+        $css_path = get_theme_file_path('/assets/css/top.css');
+
+        if (file_exists($css_path)) {
+            wp_enqueue_style(
+                'mytheme-top',
+                get_theme_file_uri('/assets/css/top.css'),
+                [],
+                filemtime($css_path)
+            );
+        }
+    }
+}
+add_action('wp_enqueue_scripts', 'mytheme_enqueue_shop_archive_styles');
+
 function mytheme_add_google_tag_manager() {
     ?>
     <!-- Google Tag Manager -->

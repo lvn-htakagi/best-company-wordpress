@@ -1,15 +1,12 @@
 
 <?php
-wp_enqueue_style(
-    'shop-archive',
-    get_theme_file_uri('/assets/css/shop-archive.css'),
-    [],
-    '1.0.0'
-);
-
 get_header();
 
-$year = get_query_var('shop_year');
+$year = (int) get_query_var('shop_year');
+
+if (!$year) {
+    $year = (int) date('Y');
+}
 
 // 公開済みショップをすべて取得（年・地域の条件なし）
 $shops_query = new WP_Query([
@@ -91,60 +88,85 @@ uksort($grouped_shops, function ($a, $b) use ($prefecture_order) {
 });
 ?>
 
-<main class="shop-archive">
-    <header class="shop-archive__header">
-        <h1>ショップ一覧</h1>
-        <p>登録されているショップをご紹介します。</p>
-    </header>
+<section id="logoList_top<?php echo esc_attr($year !== (int) date('Y') ? '_past' : ''); ?>">
+    <div class="contentsInner">
 
-    <div class="shop-archive__content">
-        <?php if (empty($grouped_shops)) : ?>
-            <p class="shop-archive__empty">
-                公開済みのショップはまだありません。
-            </p>
-        <?php else : ?>
-            <?php foreach ($grouped_shops as $prefecture => $shops) : ?>
-                <section class="pref-section">
-                    <h2><?php echo esc_html($prefecture); ?></h2>
+        <p class="sectionTitle mincho">
+            ベスト不動産カンパニー一覧
+        </p>
 
-                    <ul class="shop-grid">
-                        <?php foreach ($shops as $shop) : ?>
-                            <li class="shop-card">
-                                <a href="<?php echo esc_url($shop['url']); ?>">
-                                    <?php if ($shop['image_id']) : ?>
-                                        <?php
-                                        echo wp_get_attachment_image(
-                                            $shop['image_id'],
-                                            'medium',
-                                            false,
-                                            ['class' => 'shop-card__image']
-                                        );
-                                        ?>
-                                    <?php endif; ?>
+        <?php foreach ($grouped_shops as $prefecture => $shop_ids) : ?>
+            <div class="prefectureDiv">
 
-                                    <h3>
-                                        <?php
-                                        echo esc_html(
-                                            $shop['name'] ?: 'ショップ名未設定'
-                                        );
-                                        ?>
-                                    </h3>
+                <p class="prefectureName mincho">
+                    <?php echo esc_html($prefecture); ?>
+                </p>
 
-                                    <p>
-                                        <?php
-                                        echo esc_html(
-                                            $shop['detail'] ?: '詳細情報はありません。'
-                                        );
-                                        ?>
-                                    </p>
-                                </a>
-                            </li>
-                        <?php endforeach; ?>
-                    </ul>
-                </section>
-            <?php endforeach; ?>
-        <?php endif; ?>
+                <ul class="fadein">
+                    <?php foreach ($shop_ids as $shop) : ?>
+                        <?php
+                        $shop_name = $shop['name'];
+
+                        $image_id = $shop['image_id'];
+
+                        $image_url = $image_id
+                            ? wp_get_attachment_image_url($image_id, 'full')
+                            : '';
+                        ?>
+
+                        <li>
+                            <a href="<?php echo esc_url($shop['url']); ?>">
+                                <?php if ($image_url) : ?>
+                                    <img
+                                        src="<?php echo esc_url($image_url); ?>"
+                                        alt="<?php echo esc_attr($shop_name); ?>"
+                                    >
+                                <?php endif; ?>
+
+                                <p class="corpName">
+                                    <?php echo esc_html($shop_name); ?>
+                                </p>
+                            </a>
+                        </li>
+                    <?php endforeach; ?>
+
+                    <?php if (count($shop_ids) === 2) : ?>
+                        <li></li>
+                    <?php endif; ?>
+                </ul>
+
+            </div>
+        <?php endforeach; ?>
+
+        <div id="pastpageList">
+            <p>過去のベスト不動産カンパニー一覧</p>
+
+            <ul>
+                <?php for ($i = 2020; $i < (int) date('Y'); $i++) : ?>
+                    <li>
+                        <a href="<?php echo esc_url(home_url('/shops/' . $i . '/')); ?>">
+                            <?php echo esc_html($i); ?>年
+                        </a>
+                    </li>
+                <?php endfor; ?>
+            </ul>
+        </div>
+
     </div>
-</main>
+
+    <div id="footerTown">
+        <img
+            src="<?php echo esc_url(get_theme_file_uri('/assets/images/footerTown.png')); ?>"
+            alt=""
+        >
+    </div>
+</section>
+
+<div id="breadcrumbBottom" class="sp">
+    <a href="https://www.lvnmatch.com/" rel="nofollow">
+        不動産の比較サイト リビンマッチ
+    </a>
+    &nbsp;&gt;&nbsp;ベスト不動産カンパニー
+</div>
 
 <?php get_footer(); ?>

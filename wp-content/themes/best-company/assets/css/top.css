@@ -1,0 +1,237 @@
+@charset "utf-8";
+#logoList_top,
+#logoList_pastpage {
+  background: url("../images/zarazara.jpg");
+  padding: 50px 0 0;
+}
+#logoList_top .sectionTitle,
+#logoList_pastpage .sectionTitle {
+  text-shadow: 0 2px 0 #ffffff;
+}
+#logoList_top .contentsInner,
+#logoList_pastpage .contentsInner {
+  position: relative;
+}
+#logoList_top .contentsInner::after {
+  content: "";
+  position: absolute;
+  top: -217px;
+  right: 10px;
+  background: url("../images/mainoumi_top.png") no-repeat center bottom;
+  width: 194px;
+  height: 233px;
+}
+#logoList_top_past .contentsInner::after {
+  content: none;
+}
+#logoList_top_past {
+  background: url(../images/zarazara.jpg);
+  padding: 50px 0 0;
+}
+.prefectureDiv ul {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+}
+.prefectureDiv ul li {
+  width: 280px;
+}
+.prefectureDiv ul li img {
+  display: inline-block;
+  background-color: #fff;
+  width: 240px;
+  height: 120px;
+  padding: 10px 20px;
+  box-shadow: 0 0 2px 1px rgba(82, 82, 82, 0.2);
+}
+.prefectureDiv ul li p {
+  width: 280px;
+  display: inline-block;
+}
+.prefectureName {
+  font-size: 20px;
+  font-weight: bold;
+  margin: 3em 0 0.3em;
+  text-shadow: 0 2px 0 #ffffff;
+}
+.corpName {
+  font-size: 14px;
+  padding-top: 0.5em;
+  color: #000;
+}
+/* 来年ページ */
+#nextpageList {
+  margin: 50px auto 30px;
+}
+#nextpageList ul li a {
+  font-size: 18px;
+  text-decoration: underline;
+  padding: 20px 0;
+  display: inline-block;
+}
+#nextpageList ul li {
+  position: relative;
+  margin: 0 4em 0 0;
+  width: 26em;
+}
+
+#nextpageList ul li::after {
+  position: absolute;
+  top: 50%;
+  right: 1em;
+  width: 0.5em;
+  height: 0.5em;
+  transform: translateY(-50%) rotate(45deg);
+  border-right: 2px solid currentColor;
+  border-top: 2px solid currentColor;
+  content: "";
+  transition: 0.3s;
+}
+
+/* 過去ページ */
+#pastpageList {
+  width: 100%;
+  margin: 80px auto 50px;
+}
+#pastpageList p {
+  font-size: 18px;
+  text-align: center;
+  padding: 10px 0;
+  border-top: 1px solid #333;
+  border-bottom: 1px solid #333;
+}
+#pastpageList ul {
+  overflow: hidden;
+}
+
+#pastpageList ul li {
+  position: relative;
+  width: 7em;
+  float: left;
+  margin: 0 4em 0 0;
+}
+#pastpageList ul li a {
+  font-size: 18px;
+  text-decoration: underline;
+  padding: 20px 0;
+  display: inline-block;
+}
+#pastpageList ul li::after {
+  position: absolute;
+  top: 50%;
+  right: 1em;
+  width: 0.5em;
+  height: 0.5em;
+  transform: translateY(-50%) rotate(45deg);
+  border-right: 2px solid currentColor;
+  border-top: 2px solid currentColor;
+  content: "";
+  transition: 0.3s;
+}
+
+/* 過去ページのタイトル */
+#mainV_past {
+  text-align: center;
+  background-color: #000;
+  position: relative;
+}
+#pastTtl {
+  font-size: 26px;
+  text-align: center;
+  color: #fff;
+  width: 20em;
+  text-shadow: 0 0 4px #000;
+  letter-spacing: 0.1em;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  line-height: 150px;
+}
+
+@media only screen and (max-width: 640px) {
+  #headMothers {
+    margin: 0 auto;
+  }
+  #about {
+    font-weight: bold;
+    width: 82%;
+    padding: 1.5em;
+    margin: 0 auto;
+    font-size: 5.8vw;
+    background: rgb(237, 237, 237);
+    background: -moz-linear-gradient(
+      top,
+      rgba(237, 237, 237, 1) -1%,
+      rgba(237, 237, 237, 1) 0%,
+      rgba(246, 246, 246, 1) 47%,
+      rgba(255, 255, 255, 1) 100%
+    );
+    background: -webkit-linear-gradient(
+      top,
+      rgba(237, 237, 237, 1) -1%,
+      rgba(237, 237, 237, 1) 0%,
+      rgba(246, 246, 246, 1) 47%,
+      rgba(255, 255, 255, 1) 100%
+    );
+    background: linear-gradient(
+      to bottom,
+      rgba(237, 237, 237, 1) -1%,
+      rgba(237, 237, 237, 1) 0%,
+      rgba(246, 246, 246, 1) 47%,
+      rgba(255, 255, 255, 1) 100%
+    );
+  }
+  #about p + p {
+    font-size: 4.2vw;
+    margin: 1em 0 0;
+    line-height: 1.7;
+  }
+  .sectionTitle {
+    text-align: center;
+  }
+  #logoList_top {
+    padding: 3em 0 0;
+    margin-top: 120px;
+  }
+  #logoList_top .contentsInner::after {
+    width: 150px;
+    height: 180px;
+    top: -182px;
+    background-size: contain;
+    right: 0;
+  }
+  .prefectureDiv ul {
+    display: block;
+  }
+  .prefectureDiv ul li {
+    margin: 0 auto 1.5em;
+  }
+  /* 過去ページ */
+
+  #headContents #mainV_past img {
+    max-width: 100%;
+    height: auto;
+  }
+  #pastTtl {
+    font-size: 4.5vw;
+  }
+  #pastpageList {
+    width: 90%;
+    margin: 80px auto 50px;
+  }
+  #pastpageList ul li {
+    width: 100%;
+    border-bottom: 1px solid #d1d1d1;
+  }
+  /* 来年ページ */
+  #nextpageList ul li {
+    width: auto;
+    margin: 0;
+    padding-right: 30px;
+  }
+}
