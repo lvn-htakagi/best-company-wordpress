@@ -1,0 +1,539 @@
+@charset "utf-8";
+h2 {
+  margin: 50px 0;
+  font-weight: bold;
+  position: relative;
+  width: 472px;
+  height: 76px;
+}
+h2 span {
+  position: absolute;
+  display: inline-block;
+  right: 32px;
+  top: 0;
+  font-size: 29px;
+  line-height: 85px;
+  text-align: center;
+}
+#presidentDiv {
+  border: 1px solid #c1962f;
+  box-shadow: 0 0 6px 0 #cacfc3;
+  padding: 36px;
+  background-color: #fff;
+  position: relative;
+}
+
+/* 追加 */
+body::before {
+  content: "";
+  display: block;
+  width: 100%;
+  position: absolute;
+  height: 400px;
+  top: 500px;
+  background: url(../images/zarazara.jpg);
+  z-index: -1;
+}
+
+#presidentDiv #profileSection {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+}
+#presidentPh {
+  width: 45%;
+  padding: 0 5%;
+}
+#presidentPh img {
+  width: 100%;
+  height: auto;
+  box-shadow: 0 0 2px 1px rgba(82, 82, 82, 0.2);
+}
+#profile {
+  width: 50%;
+  box-sizing: border-box;
+  border-right: 1px solid #e8e8e8;
+}
+#profile #presidentName {
+  font-size: 15px;
+  font-weight: bold;
+  margin: 0 0 1em 0;
+}
+#profile #biography {
+  padding-right: 80px;
+}
+#profile #biography p {
+  margin-bottom: 5px;
+}
+#profile #biography dl {
+  line-height: 1.7;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  flex-wrap: wrap;
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+}
+#profile #biography dl dt {
+  width: 20%;
+  display: block;
+}
+#profile #biography dl dd {
+  width: 80%;
+}
+#corpIntroduction,
+#interview {
+  margin-top: 3em;
+  display: block !important;
+  font-size: 15px;
+}
+#corpIntroduction p,
+#interview p {
+  text-align: center;
+  font-weight: bold;
+  line-height: 26px;
+  height: 26px;
+  background: url("../images/interviewTitle.png") no-repeat center center;
+  margin-bottom: 1.5em;
+}
+#corpIntroduction dl,
+#interview dl {
+  line-height: 1.6;
+}
+#corpIntroduction dl dt,
+#interview dl dt {
+  position: relative;
+  font-weight: bold;
+  margin-bottom: 0.8em;
+}
+#interview dl dt {
+  padding-left: 3.5em;
+}
+#interview dl dt::before {
+  border-top: 1px solid;
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 3em;
+}
+#corpIntroduction dl dd {
+  margin-bottom: 0.8em;
+}
+#interview dl dd {
+  margin-bottom: 2em;
+}
+#interview dl dd:last-child {
+  margin-bottom: 0;
+}
+#corpInfo h2,
+#corpInfo div {
+  display: inline-block;
+}
+#corpLogo {
+  width: calc(100% - 480px);
+  padding: 0;
+  text-align: center;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+#corpLogo img {
+  display: inline-block;
+  width: 240px;
+  height: 120px;
+}
+#corpName {
+  width: 80%;
+  font-size: 26px;
+  font-weight: bold;
+  vertical-align: middle;
+  margin-bottom: 15px;
+}
+#overview {
+  font-size: 15px;
+  padding: 36px;
+  margin-top: 120px;
+  background-color: #fff;
+  box-shadow: 0 0 6px 0 #cacfc3;
+  border: 1px solid #c8c8c8;
+  box-sizing: border-box;
+}
+#overview p {
+  color: #fff;
+  font-size: 18px;
+  font-weight: bold;
+  letter-spacing: 0.1em;
+  text-indent: 50px;
+  padding-left: 0.8em;
+  background: -moz-linear-gradient(left, #b68d4c 0%, #dbc272 100%);
+  background: -webkit-linear-gradient(left, #b68d4c 0%, #dbc272 100%);
+  background: linear-gradient(to right, #b68d4c 0%, #dbc272 100%);
+  text-shadow: -1px -1px 0 #000;
+}
+
+#overview p,
+#history p,
+#gallery p {
+  /* 装飾系リボン */
+  position: relative;
+  height: 50px;
+  line-height: 50px;
+  padding: 0 0.3em;
+  margin-left: -52px;
+  margin-bottom: 2em;
+}
+#overview p::before,
+#overview p::after,
+#history p::before,
+#history p::after,
+#gallery p::before,
+#gallery p::after {
+  content: "";
+  position: absolute;
+  box-sizing: border-box;
+}
+#overview p::before,
+#history p::before,
+#gallery p::before {
+  top: 100%;
+  left: 0;
+  border-width: 0 15px 15px 0;
+  border-style: solid;
+  border-color: transparent;
+  border-right-color: #544009;
+}
+#overview p::after,
+#history p::after,
+#gallery p::after {
+  top: 0;
+  right: 0;
+  z-index: 2;
+  border-width: 25px 20px;
+  border-style: solid;
+  border-color: transparent;
+  border-right-color: #ffffff;
+}
+#overview dl {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+#overview dl dt {
+  width: 20%;
+  text-indent: 1em;
+  background-color: #dedddd;
+}
+#overview dl dd {
+  width: 78%;
+}
+#overview dl dt,
+#overview dl dd {
+  border-bottom: 1px solid #c8c8c8;
+  line-height: 1.5em;
+  padding: 1em 0;
+  word-break: break-all;
+}
+#history {
+  font-size: 15px;
+  padding: 36px;
+  margin-top: 120px;
+  background-color: #fff;
+  box-shadow: 0 0 6px 0 #cacfc3;
+  border: 1px solid #c8c8c8;
+  box-sizing: border-box;
+}
+#history p {
+  color: #fff;
+  font-size: 18px;
+  font-weight: bold;
+  letter-spacing: 0.1em;
+  text-indent: 50px;
+  padding-left: 0.8em;
+  background: -moz-linear-gradient(left, #b68d4c 0%, #dbc272 100%);
+  background: -webkit-linear-gradient(left, #b68d4c 0%, #dbc272 100%);
+  background: linear-gradient(to right, #b68d4c 0%, #dbc272 100%);
+  text-shadow: -1px -1px 0 #000;
+}
+#history dl {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+#history dl dt:nth-of-type(odd),
+#history dl dd:nth-of-type(odd) {
+  background-color: #dedddd;
+}
+#history dl dt {
+  width: 15%;
+  text-indent: 1em;
+}
+#history dl dd {
+  width: 85%;
+  text-indent: 1em;
+}
+#history dl dt,
+#history dl dd {
+  line-height: 1.5em;
+  padding: 1em 0;
+}
+#gallery {
+  font-size: 15px;
+  padding: 36px;
+  margin-top: 120px;
+  background-color: #fff;
+  box-shadow: 0 0 6px 0 #cacfc3;
+  border: 1px solid #c8c8c8;
+  box-sizing: border-box;
+}
+#gallery p {
+  color: #fff;
+  font-size: 18px;
+  font-weight: bold;
+  letter-spacing: 0.1em;
+  text-indent: 50px;
+  padding-left: 0.8em;
+  background: -moz-linear-gradient(left, #b68d4c 0%, #dbc272 100%);
+  background: -webkit-linear-gradient(left, #b68d4c 0%, #dbc272 100%);
+  background: linear-gradient(to right, #b68d4c 0%, #dbc272 100%);
+  text-shadow: -1px -1px 0 #000;
+}
+#gallery ul {
+  margin: 20px 0 0;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+}
+#gallery ul li {
+  width: 26.67%;
+  margin: 0 9.9% 10% 0;
+}
+#gallery ul li:nth-of-type(3n) {
+  margin-right: 0;
+}
+
+#gallery ul li img {
+  width: 100%;
+  height: auto;
+  box-shadow: 0 0 2px 1px rgba(82, 82, 82, 0.2);
+  border: 4px solid #fff;
+  box-sizing: border-box;
+  margin-bottom: 10px;
+}
+
+.photoDdesc {
+  font-size: 14px;
+}
+#editorialComment {
+  margin: 60px 0 80px;
+  padding: 2em;
+  border: 1px solid #c8c8c8;
+  font-size: 15px;
+  box-shadow: 0 0 6px 0 #cacfc3;
+}
+#editorTitle {
+  padding: 0.6em 0 0.4em;
+  margin: 0 0 1.3em;
+  line-height: 20px;
+  border-top: 1px solid #c8c8c8;
+  border-bottom: 1px solid #c8c8c8;
+}
+#editorTitle img {
+  width: 20px;
+  height: 20px;
+  vertical-align: middle;
+  margin-right: 10px;
+}
+#editorialComment p {
+  font-size: 15px;
+  font-weight: bold;
+  line-height: 2;
+}
+hr {
+  border: 0;
+  margin: 20px auto;
+  max-width: 100%;
+  background-position: 50%;
+  box-sizing: border-box;
+  height: 16px;
+  width: 100%;
+  background-image: radial-gradient(
+    farthest-side at 50% -50%,
+    rgba(0, 0, 0, 0.3),
+    rgba(0, 0, 0, 0)
+  );
+  position: relative;
+}
+
+/* この企業に問い合わせる */
+#inquiryBtn {
+  background: url(../images/zarazara.jpg);
+  padding: 50px 0;
+  margin: 60px auto;
+}
+
+#inquiryBtn a:link,
+#inquiryBtn a:visited,
+#inquiryBtn a:active {
+  display: block;
+  width: 404px;
+  height: 70px;
+  margin: 0 auto;
+  transition: 0.3s;
+}
+#inquiryBtn a:hover {
+  opacity: 0.8;
+}
+
+@media only screen and (max-width: 640px) {
+  #corpName {
+    width: 100%;
+    font-size: 6vw;
+  }
+  h2 {
+    width: 100%;
+    margin: 3em 0 1.5em;
+  }
+  h2 img {
+    width: 100%;
+  }
+  h2 span {
+    font-size: 5.5vw;
+    line-height: 54px;
+  }
+  #presidentDiv #profileSection {
+    display: block;
+  }
+  #presidentDiv::after {
+    content: none;
+  }
+  #profile {
+    width: 100%;
+    border-right: none;
+  }
+  #presidentPh img {
+    margin-bottom: 0.5em;
+  }
+  #profile #presidentName {
+    text-align: right;
+  }
+  #profile #biography {
+    margin-top: 30px;
+    padding-right: 0;
+    width: 100%;
+    font-size: 15px;
+  }
+  #profile #biography p {
+    text-align: center;
+  }
+  #profile #biography dl {
+    display: block;
+  }
+  #profile #biography dl dt,
+  #profile #biography dl dd {
+    display: inline-block;
+    width: 100%;
+  }
+  #profile #biography dl dd {
+    border-bottom: 1px solid #c8c8c8;
+    padding-bottom: 0.8em;
+    margin-bottom: 0.8em;
+    line-height: 1.4;
+  }
+  #presidentPh {
+    width: auto;
+    text-align: center;
+  }
+  #corpLogo {
+    width: 100%;
+    height: 86px;
+    text-align: center;
+  }
+  #corpLogo img {
+    display: inline-block;
+    width: 172px;
+    height: 86px;
+  }
+  #interview dl dt {
+    padding-left: 0;
+  }
+  #interview dl dt::before {
+    content: none;
+  }
+  #overview {
+    margin-top: 60px;
+  }
+  #overview dl {
+    display: block;
+  }
+  #overview dl dt {
+    font-weight: bold;
+  }
+  #overview dl dt,
+  #overview dl dd {
+    width: 100%;
+  }
+  #history {
+    margin-top: 60px;
+  }
+  #history dl {
+    display: block;
+  }
+  #history dl dt {
+    font-weight: bold;
+    background-color: #dedddd;
+    border-top: 1px solid #c8c8c8;
+    border-bottom: 1px solid #c8c8c8;
+  }
+  #history dl dd:nth-of-type(odd) {
+    background-color: #fff;
+  }
+  #history dl dt,
+  #history dl dd {
+    width: 100%;
+  }
+  #history dl dd {
+    text-indent: 0;
+  }
+  #gallery {
+    margin-top: 60px;
+  }
+  #gallery ul {
+    display: block;
+  }
+  #gallery ul li {
+    width: 100%;
+  }
+  #gallery ul li img {
+    width: 100%;
+    height: auto;
+  }
+
+  /* この企業に問い合わせる */
+  #inquiryBtn {
+    padding: 30px 0;
+  }
+  #inquiryBtn a:link,
+  #inquiryBtn a:visited,
+  #inquiryBtn a:active {
+    width: auto;
+    height: 48px;
+    text-align: center;
+  }
+  #inquiryBtn a img {
+    width: auto;
+    height: 48px;
+  }
+}

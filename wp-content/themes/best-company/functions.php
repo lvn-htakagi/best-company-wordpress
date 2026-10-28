@@ -1999,11 +1999,11 @@ add_filter('query_vars', 'mytheme_shop_year_query_vars');
 
 function mytheme_enqueue_shop_single_styles() {
     if (is_singular('shop')) {
-        $css_path = get_theme_file_path('/assets/css/shop-single.css');
+        $css_path = get_theme_file_path('/assets/css/detail.css');
 
         wp_enqueue_style(
             'mytheme-shop-single',
-            get_theme_file_uri('/assets/css/shop-single.css'),
+            get_theme_file_uri('/assets/css/detail.css'),
             [],
             file_exists($css_path) ? filemtime($css_path) : null
         );
