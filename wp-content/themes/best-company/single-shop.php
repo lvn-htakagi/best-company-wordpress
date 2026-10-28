@@ -17,18 +17,18 @@ if (have_posts()) :
         // 会社概要
         $company_fields = [
             'address'    => get_post_meta($shop_id, '_shop_address', true),
-            'phone'      => get_post_meta($shop_id, '_shop_tel', true),
+            'tel'      => get_post_meta($shop_id, '_shop_tel', true),
             'fax'        => get_post_meta($shop_id, '_shop_fax', true),
             'url'        => get_post_meta($shop_id, '_shop_url', true),
             'capital'    => get_post_meta($shop_id, '_shop_capital', true),
-            'sales'      => get_post_meta($shop_id, '_shop_net_sales', true),
-            'business'   => get_post_meta($shop_id, '_shop_business_content', true),
-            'license'    => get_post_meta($shop_id, '_shop_license', true),
+            'net_sales'      => get_post_meta($shop_id, '_shop_net_sales', true),
+            'business_content'   => get_post_meta($shop_id, '_shop_business_content', true),
+            'license_number'    => get_post_meta($shop_id, '_shop_license_number', true),
             'employee'   => get_post_meta($shop_id, '_shop_employee', true),
-            'membership' => get_post_meta($shop_id, '_shop_membership', true),
-            'establish'  => get_post_meta($shop_id, '_shop_establish', true),
-            'branch'     => get_post_meta($shop_id, '_shop_branch', true),
-            'associate'  => get_post_meta($shop_id, '_shop_associate', true),
+            'organizations' => get_post_meta($shop_id, '_shop_organizations', true),
+            'establishment'  => get_post_meta($shop_id, '_shop_establishment', true),
+            'base'     => get_post_meta($shop_id, '_shop_base', true),
+            'relationship'  => get_post_meta($shop_id, '_shop_relationship', true),
         ];
 
         // 代表者情報
@@ -197,7 +197,7 @@ if (have_posts()) :
                         <dd><?php echo esc_html($company_fields['address']); ?></dd>
 
                         <dt>電話番号</dt>
-                        <dd><?php echo esc_html($company_fields['phone']); ?></dd>
+                        <dd><?php echo esc_html($company_fields['tel']); ?></dd>
 
                         <dt>FAX番号</dt>
                         <dd><?php echo esc_html($company_fields['fax']); ?></dd>
@@ -218,28 +218,28 @@ if (have_posts()) :
                         <dd><?php echo esc_html($company_fields['capital']); ?></dd>
 
                         <dt>売上高</dt>
-                        <dd><pre><?php echo esc_html($company_fields['sales']); ?></pre></dd>
+                        <dd><pre><?php echo esc_html($company_fields['net_sales']); ?></pre></dd>
 
                         <dt>事業内容</dt>
-                        <dd><pre><?php echo esc_html($company_fields['business']); ?></pre></dd>
+                        <dd><pre><?php echo esc_html($company_fields['business_content']); ?></pre></dd>
 
                         <dt>許認可・免許番号</dt>
-                        <dd><pre><?php echo esc_html($company_fields['license']); ?></pre></dd>
+                        <dd><pre><?php echo esc_html($company_fields['license_number']); ?></pre></dd>
 
                         <dt>従業員数</dt>
                         <dd><?php echo esc_html($company_fields['employee']); ?></dd>
 
                         <dt>加盟団体</dt>
-                        <dd><pre><?php echo esc_html($company_fields['membership']); ?></pre></dd>
+                        <dd><pre><?php echo esc_html($company_fields['organizations']); ?></pre></dd>
 
                         <dt>設立年月</dt>
-                        <dd><?php echo esc_html($company_fields['establish']); ?></dd>
+                        <dd><?php echo esc_html($company_fields['establishment']); ?></dd>
 
                         <dt>拠点</dt>
-                        <dd><pre><?php echo esc_html($company_fields['branch']); ?></pre></dd>
+                        <dd><pre><?php echo esc_html($company_fields['base']); ?></pre></dd>
 
                         <dt>関係会社</dt>
-                        <dd><pre><?php echo esc_html($company_fields['associate']); ?></pre></dd>
+                        <dd><pre><?php echo esc_html($company_fields['relationship']); ?></pre></dd>
                     </dl>
                 </section>
 

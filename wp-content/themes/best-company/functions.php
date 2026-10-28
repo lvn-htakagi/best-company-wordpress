@@ -417,7 +417,7 @@ function mytheme_enqueue_shop_media($hook) {
     wp_enqueue_media();
 
     wp_enqueue_script(
-        'mytheme-shop-media',
+        'mytheme-shop-image-media',
         get_theme_file_uri('/js/shop-media.js'),
         ['jquery'],
         filemtime(get_theme_file_path('/js/shop-media.js')),
@@ -1001,7 +1001,7 @@ function mytheme_save_shop_tel($post_id) {
         return;
     }
 
-    if(!preg_match("/^0[0-9]{9}$/i",$_POST['shop_tel'])) {
+    if (!isset($_POST['shop_tel'])) {
         return;
     }
 
@@ -1009,6 +1009,11 @@ function mytheme_save_shop_tel($post_id) {
 
     if ($tel === '') {
         delete_post_meta($post_id, '_shop_tel');
+        return;
+    }
+
+    // ハイフン区切り可、数字部分が0始まりの10〜11桁
+    if (!preg_match('/^0\d{1,4}-?\d{1,4}-?\d{3,4}$/', $tel) || !preg_match('/^0\d{9,10}$/', str_replace('-', '', $tel))) {
         return;
     }
 
