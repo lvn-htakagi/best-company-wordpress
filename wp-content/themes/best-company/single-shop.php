@@ -33,7 +33,7 @@ if (have_posts()) :
 
         // 代表者情報
         $president       = get_post_meta($shop_id, '_shop_president', true);
-        $president_image = (int) get_post_meta($shop_id, '_shop_president_image', true);
+        $president_image = (int) get_post_meta($shop_id, '_shop_face', true);
         $career           = get_post_meta($shop_id, '_shop_career', true);
 
         // 企業紹介

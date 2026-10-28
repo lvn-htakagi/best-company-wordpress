@@ -122,46 +122,48 @@ function mytheme_save_shop_name($post_id) {
 add_action('save_post_shop', 'mytheme_save_shop_name');
 
 /**
- * ショップ編集画面に「詳細」を追加
+ * ショップ編集画面に「代表者名」を追加
  */
-function mytheme_add_shop_detail_field() {
+function mytheme_add_shop_president_field() {
     add_meta_box(
-        'shop_detail',
-        '詳細',
-        'mytheme_render_shop_detail_field',
+        'shop_president',
+        '代表者名',
+        'mytheme_render_shop_president_field',
         'shop',
         'normal',
         'default'
     );
 }
-add_action('add_meta_boxes', 'mytheme_add_shop_detail_field');
+add_action('add_meta_boxes', 'mytheme_add_shop_president_field');
 
 /**
- * 詳細の入力欄を表示
+ * 代表者名の入力欄を表示
  */
-function mytheme_render_shop_detail_field($post) {
-    $comment = get_post_meta($post->ID, '_shop_detail', true);
+function mytheme_render_shop_president_field($post) {
+    $president = get_post_meta($post->ID, '_shop_president', true);
 
-    wp_nonce_field('mytheme_save_shop_detail', 'mytheme_shop_detail_nonce');
+    wp_nonce_field('mytheme_save_shop_president', 'mytheme_shop_president_nonce');
     ?>
-    <label for="shop_detail">詳細</label>
-    <textarea
-        id="shop_detail"
-        name="shop_detail"
+    <label for="shop_president">代表者名</label>
+    <input
+        type="text"
+        id="shop_president"
+        name="shop_president"
         style="width: 100%;"
-    ><?php echo esc_textarea($comment); ?></textarea>
+        value="<?php echo esc_attr($president); ?>"
+    />
     <?php
 }
 
 /**
- * 詳細を保存
+ * 代表者名を保存
  */
-function mytheme_save_shop_detail($post_id) {
+function mytheme_save_shop_president($post_id) {
     if (
-        !isset($_POST['mytheme_shop_detail_nonce']) ||
+        !isset($_POST['mytheme_shop_president_nonce']) ||
         !wp_verify_nonce(
-            sanitize_text_field(wp_unslash($_POST['mytheme_shop_detail_nonce'])),
-            'mytheme_save_shop_detail'
+            sanitize_text_field(wp_unslash($_POST['mytheme_shop_president_nonce'])),
+            'mytheme_save_shop_president'
         )
     ) {
         return;
@@ -171,16 +173,190 @@ function mytheme_save_shop_detail($post_id) {
         return;
     }
 
-    $comment = sanitize_text_field(wp_unslash($_POST['shop_detail']));
+    $president = sanitize_text_field(wp_unslash($_POST['shop_president']));
 
-    if ($comment === '') {
-        delete_post_meta($post_id, '_shop_detail');
+    if ($president === '') {
+        delete_post_meta($post_id, '_shop_president');
         return;
     }
 
-    update_post_meta($post_id, '_shop_detail', $comment);
+    update_post_meta($post_id, '_shop_president', $president);
 }
-add_action('save_post_shop', 'mytheme_save_shop_detail');
+add_action('save_post_shop', 'mytheme_save_shop_president');
+
+/**
+ * ショップ編集画面に「経歴」を追加
+ */
+function mytheme_add_shop_career_field() {
+    add_meta_box(
+        'shop_career',
+        '経歴',
+        'mytheme_render_shop_career_field',
+        'shop',
+        'normal',
+        'default'
+    );
+}
+add_action('add_meta_boxes', 'mytheme_add_shop_career_field');
+
+/**
+ * 経歴の入力欄を表示
+ */
+function mytheme_render_shop_career_field($post) {
+    $comment = get_post_meta($post->ID, '_shop_career', true);
+
+    wp_nonce_field('mytheme_save_shop_career', 'mytheme_shop_career_nonce');
+    ?>
+    <label for="shop_career">経歴</label>
+    <textarea
+        id="shop_career"
+        name="shop_career"
+        style="width: 100%;"
+    ><?php echo esc_textarea($comment); ?></textarea>
+    <?php
+}
+
+/**
+ * 経歴を保存
+ */
+function mytheme_save_shop_career($post_id) {
+    if (
+        !isset($_POST['mytheme_shop_career_nonce']) ||
+        !wp_verify_nonce(
+            sanitize_text_field(wp_unslash($_POST['mytheme_shop_career_nonce'])),
+            'mytheme_save_shop_career'
+        )
+    ) {
+        return;
+    }
+
+    if (!mytheme_can_save_shop($post_id)) {
+        return;
+    }
+
+    $comment = sanitize_text_field(wp_unslash($_POST['shop_career']));
+
+    if ($comment === '') {
+        delete_post_meta($post_id, '_shop_career');
+        return;
+    }
+
+    update_post_meta($post_id, '_shop_career', $comment);
+}
+add_action('save_post_shop', 'mytheme_save_shop_career');
+
+/**
+ * ショップ編集画面に「顔写真」を追加
+ */
+function mytheme_add_shop_face_field() {
+    add_meta_box(
+        'shop_face',
+        '顔写真',
+        'mytheme_render_shop_face_field',
+        'shop',
+        'normal',
+        'default'
+    );
+}
+add_action('add_meta_boxes', 'mytheme_add_shop_face_field');
+
+/**
+ * 画像の入力欄を表示
+ */
+function mytheme_render_shop_face_field($post) {
+    $image_id = get_post_meta($post->ID, '_shop_face', true);
+    $image_url = $image_id ? wp_get_attachment_image_url($image_id, 'medium') : '';
+
+    wp_nonce_field(
+        'mytheme_save_shop_face',
+        'mytheme_shop_face_nonce'
+    );
+
+    echo '<div id="shop-face-image-preview">';
+
+    if ($image_url) {
+        echo '<img src="' . esc_url($image_url) . '" style="max-width: 300px; height: auto;">';
+    }
+
+    echo '</div>';
+
+    echo '<input type="hidden" id="shop-face-id" name="shop_face" value="' . esc_attr($image_id) . '">';
+    echo '<input type="hidden" id="shop-face-removed" name="shop_face_removed" value="0">';
+
+    echo '<button type="button" class="button" id="shop-face-select">画像を選択</button> ';
+    echo '<button type="button" class="button" id="shop-face-remove">画像を削除</button>';
+}
+
+/**
+ * ショップ編集画面でメディアライブラリを読み込む
+ */
+function mytheme_enqueue_face_media($hook) {
+    if (!in_array($hook, ['post.php', 'post-new.php'], true)) {
+        return;
+    }
+
+    $screen = get_current_screen();
+
+    if (!$screen || $screen->post_type !== 'shop') {
+        return;
+    }
+
+    wp_enqueue_media();
+
+    wp_enqueue_script(
+        'mytheme-shop-media',
+        get_theme_file_uri('/js/face-media.js'),
+        ['jquery'],
+        filemtime(get_theme_file_path('/js/face-media.js')),
+        true
+    );
+}
+add_action('admin_enqueue_scripts', 'mytheme_enqueue_face_media');
+
+/**
+ * ショップ画像を保存
+ */
+function mytheme_save_shop_face($post_id) {
+    if (
+        !isset($_POST['mytheme_shop_face_nonce']) ||
+        !wp_verify_nonce(
+            sanitize_text_field(wp_unslash($_POST['mytheme_shop_face_nonce'])),
+            'mytheme_save_shop_face'
+        )
+    ) {
+        return;
+    }
+
+    if (!mytheme_can_save_shop($post_id)) {
+        return;
+    }
+
+    if (
+        isset($_POST['shop_face_removed']) &&
+        is_string($_POST['shop_face_removed']) &&
+        sanitize_text_field(wp_unslash($_POST['shop_face_removed'])) === '1'
+    ) {
+        delete_post_meta($post_id, '_shop_face');
+        return;
+    }
+
+    if (!isset($_POST['shop_face'])) {
+        return;
+    }
+
+    $image_id = absint($_POST['shop_face']);
+
+    if ($image_id && !wp_attachment_is_image($image_id)) {
+        return;
+    }
+
+    if (!$image_id) {
+        return;
+    }
+
+    update_post_meta($post_id, '_shop_face', $image_id);
+}
+add_action('save_post_shop', 'mytheme_save_shop_face');
 
 /**
  * ショップ編集画面に「画像」を追加
