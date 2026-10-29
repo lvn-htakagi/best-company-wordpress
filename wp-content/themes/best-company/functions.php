@@ -1,5 +1,6 @@
 <?php
 require_once get_theme_file_path('/inc/save-field.php');
+require_once get_theme_file_path('/inc/add-meta-box.php');
 
 define('LVN_MATCH_URL', 'https://www.lvnmatch.com');
 define('BEST_COMPANY_URL', LVN_MATCH_URL . '/best/');
@@ -61,17 +62,11 @@ add_action('init', 'mytheme_remove_shop_history_editor_support', 20);
 /**
  * ショップ編集画面に「名前」を追加
  */
-function mytheme_add_shop_name_field() {
-    add_meta_box(
-        'shop_name',
-        '名前',
-        'mytheme_render_shop_name_field',
-        'shop',
-        'normal',
-        'default'
-    );
-}
-add_action('add_meta_boxes', 'mytheme_add_shop_name_field');
+mytheme_add_shop_meta_box(
+    'shop_name',
+    '名前',
+    'mytheme_render_shop_name_field'
+);
 
 /**
  * 名前の入力欄を表示
@@ -124,17 +119,11 @@ add_action('save_post_shop', 'mytheme_save_shop_name');
 /**
  * ショップ編集画面に「代表者名」を追加
  */
-function mytheme_add_shop_president_field() {
-    add_meta_box(
-        'shop_president',
-        '代表者名',
-        'mytheme_render_shop_president_field',
-        'shop',
-        'normal',
-        'default'
-    );
-}
-add_action('add_meta_boxes', 'mytheme_add_shop_president_field');
+mytheme_add_shop_meta_box(
+    'shop_president',
+    '代表者名',
+    'mytheme_render_shop_president_field'
+);
 
 /**
  * 代表者名の入力欄を表示
@@ -187,17 +176,11 @@ add_action('save_post_shop', 'mytheme_save_shop_president');
 /**
  * ショップ編集画面に「経歴」を追加
  */
-function mytheme_add_shop_career_field() {
-    add_meta_box(
-        'shop_career',
-        '経歴',
-        'mytheme_render_shop_career_field',
-        'shop',
-        'normal',
-        'default'
-    );
-}
-add_action('add_meta_boxes', 'mytheme_add_shop_career_field');
+mytheme_add_shop_meta_box(
+    'shop_career',
+    '経歴',
+    'mytheme_render_shop_career_field'
+);
 
 /**
  * 経歴の入力欄を表示
@@ -248,17 +231,11 @@ add_action('save_post_shop', 'mytheme_save_shop_career');
 /**
  * ショップ編集画面に「顔写真」を追加
  */
-function mytheme_add_shop_face_field() {
-    add_meta_box(
-        'shop_face',
-        '顔写真',
-        'mytheme_render_shop_face_field',
-        'shop',
-        'normal',
-        'default'
-    );
-}
-add_action('add_meta_boxes', 'mytheme_add_shop_face_field');
+mytheme_add_shop_meta_box(
+    'shop_face',
+    '顔写真',
+    'mytheme_render_shop_face_field'
+);
 
 /**
  * 画像の入力欄を表示
@@ -361,17 +338,11 @@ add_action('save_post_shop', 'mytheme_save_shop_face');
 /**
  * ショップ編集画面に「画像」を追加
  */
-function mytheme_add_shop_image_field() {
-    add_meta_box(
-        'shop_image',
-        '画像',
-        'mytheme_render_shop_image_field',
-        'shop',
-        'normal',
-        'default'
-    );
-}
-add_action('add_meta_boxes', 'mytheme_add_shop_image_field');
+mytheme_add_shop_meta_box(
+    'shop_image',
+    '画像',
+    'mytheme_render_shop_image_field'
+);
 
 /**
  * 画像の入力欄を表示
@@ -474,17 +445,11 @@ add_action('save_post_shop', 'mytheme_save_shop_image');
 /**
  * ショップ編集画面に「都道府県」を追加
  */
-function mytheme_add_shop_prefecture_field() {
-    add_meta_box(
-        'shop_prefecture',
-        '都道府県',
-        'mytheme_render_shop_prefecture_field',
-        'shop',
-        'normal',
-        'default'
-    );
-}
-add_action('add_meta_boxes', 'mytheme_add_shop_prefecture_field');
+mytheme_add_shop_meta_box(
+    'shop_prefecture',
+    '都道府県',
+    'mytheme_render_shop_prefecture_field'
+);
 
 /**
  * 都道府県の選択肢
@@ -569,17 +534,11 @@ add_action('save_post_shop', 'mytheme_save_shop_prefecture');
 /**
  * ショップ編集画面に「年」を追加
  */
-function mytheme_add_shop_year_field() {
-    add_meta_box(
-        'shop_year',
-        '年',
-        'mytheme_render_shop_year_field',
-        'shop',
-        'normal',
-        'default'
-    );
-}
-add_action('add_meta_boxes', 'mytheme_add_shop_year_field');
+mytheme_add_shop_meta_box(
+    'shop_year',
+    '年',
+    'mytheme_render_shop_year_field'
+);
 
 /**
  * 年の入力欄を表示
@@ -643,17 +602,11 @@ add_action('save_post_shop', 'mytheme_save_shop_year');
 /**
  * ショップ編集画面に「編集部コメント」を追加
  */
-function mytheme_add_shop_comment_field() {
-    add_meta_box(
-        'shop_comment',
-        '編集部コメント',
-        'mytheme_render_shop_comment_field',
-        'shop',
-        'normal',
-        'default'
-    );
-}
-add_action('add_meta_boxes', 'mytheme_add_shop_comment_field');
+mytheme_add_shop_meta_box(
+    'shop_comment',
+    '編集部コメント',
+    'mytheme_render_shop_comment_field'
+);
 
 /**
  * 編集部コメントの入力欄を表示
@@ -704,17 +657,11 @@ add_action('save_post_shop', 'mytheme_save_shop_comment');
 /**
  * ショップ編集画面に「企業紹介」を追加
  */
-function mytheme_add_shop_introduction_field() {
-    add_meta_box(
-        'shop_introduction',
-        '企業紹介',
-        'mytheme_render_shop_introduction_field',
-        'shop',
-        'normal',
-        'default'
-    );
-}
-add_action('add_meta_boxes', 'mytheme_add_shop_introduction_field');
+mytheme_add_shop_meta_box(
+    'shop_introduction',
+    '企業紹介',
+    'mytheme_render_shop_introduction_field'
+);
 
 /**
  * 企業紹介の入力欄を表示
@@ -765,17 +712,11 @@ add_action('save_post_shop', 'mytheme_save_shop_introduction');
 /**
  * ショップ編集画面に「インタビュー」を追加
  */
-function mytheme_add_shop_interview_field() {
-    add_meta_box(
-        'shop_interview',
-        'インタビュー',
-        'mytheme_render_shop_interview_field',
-        'shop',
-        'normal',
-        'default'
-    );
-}
-add_action('add_meta_boxes', 'mytheme_add_shop_interview_field');
+mytheme_add_shop_meta_box(
+    'shop_interview',
+    'インタビュー',
+    'mytheme_render_shop_interview_field'
+);
 
 /**
  * インタビューの入力欄を表示
@@ -826,17 +767,11 @@ add_action('save_post_shop', 'mytheme_save_shop_interview');
 /**
  * ショップ編集画面に「会社名(企業概要)」を追加
  */
-function mytheme_add_shop_company_name_field() {
-    add_meta_box(
-        'shop_company_name',
-        '会社名',
-        'mytheme_render_shop_company_name_field',
-        'shop',
-        'normal',
-        'default'
-    );
-}
-add_action('add_meta_boxes', 'mytheme_add_shop_company_name_field');
+mytheme_add_shop_meta_box(
+    'shop_company_name',
+    '会社名',
+    'mytheme_render_shop_company_name_field'
+);
 
 /**
  * 会社名(企業概要)の入力欄を表示
@@ -889,17 +824,11 @@ add_action('save_post_shop', 'mytheme_save_shop_company_name');
 /**
  * ショップ編集画面に「所在地(企業概要)」を追加
  */
-function mytheme_add_shop_address_field() {
-    add_meta_box(
-        'shop_address',
-        '所在地',
-        'mytheme_render_shop_address_field',
-        'shop',
-        'normal',
-        'default'
-    );
-}
-add_action('add_meta_boxes', 'mytheme_add_shop_address_field');
+mytheme_add_shop_meta_box(
+    'shop_address',
+    '所在地',
+    'mytheme_render_shop_address_field'
+);
 
 /**
  * 所在地(企業概要)の入力欄を表示
@@ -952,17 +881,11 @@ add_action('save_post_shop', 'mytheme_save_shop_address');
 /**
  * ショップ編集画面に「電話番号(企業概要)」を追加
  */
-function mytheme_add_shop_tel_field() {
-    add_meta_box(
-        'shop_tel',
-        '電話番号',
-        'mytheme_render_shop_tel_field',
-        'shop',
-        'normal',
-        'default'
-    );
-}
-add_action('add_meta_boxes', 'mytheme_add_shop_tel_field');
+mytheme_add_shop_meta_box(
+    'shop_tel',
+    '電話番号',
+    'mytheme_render_shop_tel_field'
+);
 
 /**
  * 電話番号(企業概要)の入力欄を表示
@@ -1024,17 +947,11 @@ add_action('save_post_shop', 'mytheme_save_shop_tel');
 /**
  * ショップ編集画面に「FAX番号(企業概要)」を追加
  */
-function mytheme_add_shop_fax_field() {
-    add_meta_box(
-        'shop_fax',
-        'FAX番号',
-        'mytheme_render_shop_fax_field',
-        'shop',
-        'normal',
-        'default'
-    );
-}
-add_action('add_meta_boxes', 'mytheme_add_shop_fax_field');
+mytheme_add_shop_meta_box(
+    'shop_fax',
+    'FAX番号',
+    'mytheme_render_shop_fax_field'
+);
 
 /**
  * 会社名(企業概要)の入力欄を表示
@@ -1087,17 +1004,11 @@ add_action('save_post_shop', 'mytheme_save_shop_fax');
 /**
  * ショップ編集画面に「URL(企業概要)」を追加
  */
-function mytheme_add_shop_url_field() {
-    add_meta_box(
-        'shop_url',
-        'URL',
-        'mytheme_render_shop_url_field',
-        'shop',
-        'normal',
-        'default'
-    );
-}
-add_action('add_meta_boxes', 'mytheme_add_shop_url_field');
+mytheme_add_shop_meta_box(
+    'shop_url',
+    'URL',
+    'mytheme_render_shop_url_field'
+);
 
 /**
  * URL(企業概要)の入力欄を表示
@@ -1150,17 +1061,11 @@ add_action('save_post_shop', 'mytheme_save_shop_url');
 /**
  * ショップ編集画面に「資本金(企業概要)」を追加
  */
-function mytheme_add_shop_capital_field() {
-    add_meta_box(
-        'shop_capital',
-        '資本金',
-        'mytheme_render_shop_capital_field',
-        'shop',
-        'normal',
-        'default'
-    );
-}
-add_action('add_meta_boxes', 'mytheme_add_shop_capital_field');
+mytheme_add_shop_meta_box(
+    'shop_capital',
+    '資本金',
+    'mytheme_render_shop_capital_field'
+);
 
 /**
  * 資本金(企業概要)の入力欄を表示
@@ -1213,17 +1118,11 @@ add_action('save_post_shop', 'mytheme_save_shop_capital');
 /**
  * ショップ編集画面に「売上高(企業概要)」を追加
  */
-function mytheme_add_shop_net_sales_field() {
-    add_meta_box(
-        'shop_net_sales',
-        '売上高',
-        'mytheme_render_shop_net_sales_field',
-        'shop',
-        'normal',
-        'default'
-    );
-}
-add_action('add_meta_boxes', 'mytheme_add_shop_net_sales_field');
+mytheme_add_shop_meta_box(
+    'shop_net_sales',
+    '売上高',
+    'mytheme_render_shop_net_sales_field'
+);
 
 /**
  * 売上高(企業概要)の入力欄を表示
@@ -1276,17 +1175,11 @@ add_action('save_post_shop', 'mytheme_save_shop_net_sales');
 /**
  * ショップ編集画面に「事業内容(企業概要)」を追加
  */
-function mytheme_add_shop_business_content_field() {
-    add_meta_box(
-        'shop_business_content',
-        '事業内容',
-        'mytheme_render_shop_business_content_field',
-        'shop',
-        'normal',
-        'default'
-    );
-}
-add_action('add_meta_boxes', 'mytheme_add_shop_business_content_field');
+mytheme_add_shop_meta_box(
+    'shop_business_content',
+    '事業内容',
+    'mytheme_render_shop_business_content_field'
+);
 
 /**
  * 事業内容(企業概要)の入力欄を表示
@@ -1337,17 +1230,11 @@ add_action('save_post_shop', 'mytheme_save_shop_business_content');
 /**
  * ショップ編集画面に「許認可・免許番号(企業概要)」を追加
  */
-function mytheme_add_shop_license_number_field() {
-    add_meta_box(
-        'shop_license_number',
-        '許認可・免許番号',
-        'mytheme_render_shop_license_number_field',
-        'shop',
-        'normal',
-        'default'
-    );
-}
-add_action('add_meta_boxes', 'mytheme_add_shop_license_number_field');
+mytheme_add_shop_meta_box(
+    'shop_license_number',
+    '許認可・免許番号',
+    'mytheme_render_shop_license_number_field'
+);
 
 /**
  * 許認可・免許番号(企業概要)の入力欄を表示
@@ -1398,17 +1285,11 @@ add_action('save_post_shop', 'mytheme_save_shop_license_number');
 /**
  * ショップ編集画面に「加盟団体(企業概要)」を追加
  */
-function mytheme_add_shop_organizations_field() {
-    add_meta_box(
-        'shop_organizations',
-        '加盟団体',
-        'mytheme_render_shop_organizations_field',
-        'shop',
-        'normal',
-        'default'
-    );
-}
-add_action('add_meta_boxes', 'mytheme_add_shop_organizations_field');
+mytheme_add_shop_meta_box(
+    'shop_organizations',
+    '加盟団体',
+    'mytheme_render_shop_organizations_field'
+);
 
 /**
  * 事業内容(企業概要)の入力欄を表示
@@ -1430,17 +1311,11 @@ function mytheme_render_shop_organizations_field($post) {
 /**
  * ショップ編集画面に「従業員数(企業概要)」を追加
  */
-function mytheme_add_shop_employee_field() {
-    add_meta_box(
-        'shop_employee',
-        '従業員数',
-        'mytheme_render_shop_employee_field',
-        'shop',
-        'normal',
-        'default'
-    );
-}
-add_action('add_meta_boxes', 'mytheme_add_shop_employee_field');
+mytheme_add_shop_meta_box(
+    'shop_employee',
+    '従業員数',
+    'mytheme_render_shop_employee_field'
+);
 
 /**
  * 従業員数(企業概要)の入力欄を表示
@@ -1522,17 +1397,11 @@ add_action('save_post_shop', 'mytheme_save_shop_organizations');
 /**
  * ショップ編集画面に「設立年月(企業概要)」を追加
  */
-function mytheme_add_shop_establishment_field() {
-    add_meta_box(
-        'shop_establishment',
-        '設立年月',
-        'mytheme_render_shop_establishment_field',
-        'shop',
-        'normal',
-        'default'
-    );
-}
-add_action('add_meta_boxes', 'mytheme_add_shop_establishment_field');
+mytheme_add_shop_meta_box(
+    'shop_establishment',
+    '設立年月',
+    'mytheme_render_shop_establishment_field'
+);
 
 /**
  * 設立年月(企業概要)の入力欄を表示
@@ -1585,17 +1454,11 @@ add_action('save_post_shop', 'mytheme_save_shop_establishment');
 /**
  * ショップ編集画面に「拠点(企業概要)」を追加
  */
-function mytheme_add_shop_base_field() {
-    add_meta_box(
-        'shop_base',
-        '拠点',
-        'mytheme_render_shop_base_field',
-        'shop',
-        'normal',
-        'default'
-    );
-}
-add_action('add_meta_boxes', 'mytheme_add_shop_base_field');
+mytheme_add_shop_meta_box(
+    'shop_base',
+    '拠点',
+    'mytheme_render_shop_base_field'
+);
 
 /**
  * 拠点(企業概要)の入力欄を表示
@@ -1646,17 +1509,11 @@ add_action('save_post_shop', 'mytheme_save_shop_base');
 /**
  * ショップ編集画面に「関係会社(企業概要)」を追加
  */
-function mytheme_add_shop_relationship_field() {
-    add_meta_box(
-        'shop_relationship',
-        '関係会社',
-        'mytheme_render_shop_relationship_field',
-        'shop',
-        'normal',
-        'default'
-    );
-}
-add_action('add_meta_boxes', 'mytheme_add_shop_relationship_field');
+mytheme_add_shop_meta_box(
+    'shop_relationship',
+    '関係会社',
+    'mytheme_render_shop_relationship_field'
+);
 
 /**
  * 関係会社(企業概要)の入力欄を表示
@@ -1707,17 +1564,11 @@ add_action('save_post_shop', 'mytheme_save_shop_relationship');
 /**
  * 沿革編集画面に「ショップ」を追加
  */
-function mytheme_add_history_shop_field() {
-    add_meta_box(
-        'history_shop',
-        'ショップ',
-        'mytheme_render_history_shop_field',
-        'shop_history',
-        'normal',
-        'default'
-    );
-}
-add_action('add_meta_boxes', 'mytheme_add_history_shop_field');
+mytheme_add_shop_history_meta_box(
+    'shop_history_shop',
+    'ショップ',
+    'mytheme_render_history_shop_field'
+);
 
 /**
  * ショップ選択欄を表示
@@ -1833,17 +1684,11 @@ add_action('save_post_shop_history', 'mytheme_save_history_shop');
 /**
  * 沿革編集画面に「年」を追加
  */
-function mytheme_add_history_year_field() {
-    add_meta_box(
-        'history_year',
-        '年',
-        'mytheme_render_history_year_field',
-        'shop_history',
-        'normal',
-        'default'
-    );
-}
-add_action('add_meta_boxes', 'mytheme_add_history_year_field');
+mytheme_add_shop_history_meta_box(
+    'history_year',
+    '年',
+    'mytheme_render_history_year_field'
+);
 
 /**
  * 年の選択肢
@@ -1933,17 +1778,11 @@ add_action('save_post_shop_history', 'mytheme_save_history_year');
 /**
  * 沿革編集画面に「月」を追加
  */
-function mytheme_add_history_month_field() {
-    add_meta_box(
-        'history_month',
-        '月',
-        'mytheme_render_history_month_field',
-        'shop_history',
-        'normal',
-        'default'
-    );
-}
-add_action('add_meta_boxes', 'mytheme_add_history_month_field');
+mytheme_add_shop_history_meta_box(
+    'history_month',
+    '月',
+    'mytheme_render_history_month_field'
+);
 
 /**
  * 月の選択肢
@@ -2042,17 +1881,11 @@ add_action('save_post_shop_history', 'mytheme_save_history_month');
 /**
  * 沿革編集画面に「沿革」を追加
  */
-function mytheme_add_history_detail_field() {
-    add_meta_box(
-        'history_detail',
-        '沿革',
-        'mytheme_render_history_detail_field',
-        'shop_history',
-        'normal',
-        'default'
-    );
-}
-add_action('add_meta_boxes', 'mytheme_add_history_detail_field');
+mytheme_add_shop_history_meta_box(
+    'history_detail',
+    '沿革',
+    'mytheme_render_history_detail_field'
+);
 
 /**
  * 沿革の入力欄を表示
