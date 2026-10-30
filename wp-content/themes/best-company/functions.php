@@ -60,6 +60,101 @@ function mytheme_remove_shop_history_editor_support() {
 add_action('init', 'mytheme_remove_shop_history_editor_support', 20);
 
 /**
+ * ショップ一覧に複製リンクを追加
+ */
+function mytheme_add_shop_duplicate_link($actions, $post) {
+    if ($post->post_type !== 'shop') {
+        return $actions;
+    }
+
+    if (!current_user_can('edit_post', $post->ID)) {
+        return $actions;
+    }
+
+    $url = wp_nonce_url(
+        admin_url('admin.php?action=mytheme_duplicate_shop&post=' . $post->ID),
+        'mytheme_duplicate_shop_' . $post->ID
+    );
+
+    $actions['duplicate'] = '<a href="' . esc_url($url) . '">複製</a>';
+
+    return $actions;
+}
+add_filter('post_row_actions', 'mytheme_add_shop_duplicate_link', 10, 2);
+
+/**
+ * ショップを複製
+ */
+function mytheme_duplicate_shop() {
+    if (!current_user_can('edit_posts')) {
+        wp_die('この操作を行う権限がありません。');
+    }
+
+    $post_id = isset($_GET['post']) ? absint($_GET['post']) : 0;
+
+    if (!$post_id) {
+        wp_die('複製元のショップが指定されていません。');
+    }
+
+    check_admin_referer('mytheme_duplicate_shop_' . $post_id);
+
+    $post = get_post($post_id);
+
+    if (!$post || $post->post_type !== 'shop') {
+        wp_die('複製元のショップが見つかりません。');
+    }
+
+    if (!current_user_can('edit_post', $post_id)) {
+        wp_die('このショップを複製する権限がありません。');
+    }
+
+    $suffix = 2;
+
+    do {
+        $new_slug = (string) $suffix;
+        $existing_post = get_page_by_path($new_slug, OBJECT, 'shop');
+        $suffix++;
+    } while ($existing_post);
+
+    // 投稿データを複製
+    $new_post_id = wp_insert_post([
+        'post_type'    => 'shop',
+        'post_title'   => $post->post_title,
+        'post_content' => $post->post_content,
+        'post_excerpt' => $post->post_excerpt,
+        'post_status'  => 'draft',
+        'menu_order'   => $post->menu_order,
+        'post_author'  => get_current_user_id(),
+        'post_name'    => $new_slug,
+    ], true);
+
+    if (is_wp_error($new_post_id)) {
+        wp_die('ショップの複製に失敗しました。');
+    }
+
+    // カスタムフィールドを複製
+    $meta_data = get_post_meta($post_id);
+
+    foreach ($meta_data as $meta_key => $meta_values) {
+        foreach ($meta_values as $meta_value) {
+            add_post_meta($new_post_id, $meta_key, maybe_unserialize($meta_value));
+        }
+    }
+
+    // アイキャッチ画像を引き継ぐ
+    $thumbnail_id = get_post_thumbnail_id($post_id);
+
+    if ($thumbnail_id) {
+        set_post_thumbnail($new_post_id, $thumbnail_id);
+    }
+
+    // 複製したショップの編集画面へ移動
+    wp_safe_redirect(admin_url('post.php?action=edit&post=' . $new_post_id));
+    exit;
+}
+add_action('admin_action_mytheme_duplicate_shop', 'mytheme_duplicate_shop');
+
+/**
  * ショップ編集画面に「名前」を追加
  */
 mytheme_add_shop_meta_box(
@@ -1993,6 +2088,68 @@ function mytheme_shop_orderby($query) {
 add_action('pre_get_posts', 'mytheme_shop_orderby');
 
 /**
+ * 沿革一覧の列を設定
+ */
+function mytheme_history_admin_columns($columns) {
+    $new_columns = [];
+
+    // 沿革を先頭にする
+    $new_columns['history_detail'] = '沿革';
+
+    // 既存の列を追加（タイトル列は除外）
+    foreach ($columns as $key => $label) {
+        if ($key !== 'title') {
+            $new_columns[$key] = $label;
+        }
+    }
+
+    return $new_columns;
+}
+add_filter('manage_shop_history_posts_columns', 'mytheme_history_admin_columns');
+
+/**
+ * 沿革一覧に沿革を表示
+ */
+function mytheme_history_admin_column_content($column, $post_id) {
+    if ($column !== 'history_detail') {
+        return;
+    }
+
+    $history_detail = get_post_meta($post_id, '_shop_history_detail', true);
+
+    echo esc_html($history_detail ?: '（沿革未入力）');
+}
+add_action('manage_shop_history_posts_custom_column', 'mytheme_history_admin_column_content', 10, 2);
+
+/**
+ * 沿革の並び替えを有効にする
+ */
+function mytheme_shop_history_sortable_columns($columns) {
+    $columns['history_detail'] = 'history_detail';
+    return $columns;
+}
+add_filter('manage_edit-shop_history_sortable_columns', 'mytheme_shop_history_sortable_columns');
+
+/**
+ * 沿革で並び替える
+ */
+function mytheme_shop_history_orderby($query) {
+    if (!is_admin() || !$query->is_main_query()) {
+        return;
+    }
+
+    if ($query->get('post_type') !== 'shop_history') {
+        return;
+    }
+
+    if ($query->get('orderby') === 'history_detail') {
+        $query->set('meta_key', '_shop_history_detail');
+        $query->set('orderby', 'meta_value');
+    }
+}
+add_action('pre_get_posts', 'mytheme_shop_history_orderby');
+
+/**
  * 年別ショップ一覧のURL
  * /shops/2026 → ショップ一覧（2026年）
  */
@@ -2040,7 +2197,7 @@ function mytheme_enqueue_lvn_styles() {
 add_action('wp_enqueue_scripts', 'mytheme_enqueue_lvn_styles');
 
 function mytheme_enqueue_fadein_script() {
-    if (get_query_var('shop_year') !== '') {
+    if (get_query_var('shop_year') !== '' || is_post_type_archive('shop')) {
         $js_path = get_theme_file_path('/assets/js/fadeIn.js');
 
         if (file_exists($js_path)) {
@@ -2057,7 +2214,7 @@ function mytheme_enqueue_fadein_script() {
 add_action('wp_enqueue_scripts', 'mytheme_enqueue_fadein_script');
 
 function mytheme_enqueue_shop_archive_styles() {
-    if (get_query_var('shop_year') !== '') {
+    if (get_query_var('shop_year') !== '' || is_post_type_archive('shop')) {
         $css_path = get_theme_file_path('/assets/css/top.css');
 
         if (file_exists($css_path)) {
@@ -2071,6 +2228,31 @@ function mytheme_enqueue_shop_archive_styles() {
     }
 }
 add_action('wp_enqueue_scripts', 'mytheme_enqueue_shop_archive_styles');
+
+function mytheme_enqueue_judge_styles() {
+    if (is_page('judge')) {
+        $css_path = get_theme_file_path('/assets/css/exam.css');
+
+        if (file_exists($css_path)) {
+            wp_enqueue_style(
+                'mytheme-judge',
+                get_theme_file_uri('/assets/css/exam.css'),
+                [],
+                filemtime($css_path)
+            );
+        }
+    }
+}
+add_action('wp_enqueue_scripts', 'mytheme_enqueue_judge_styles');
+
+function mytheme_add_shop_judge_rewrite_rule() {
+    add_rewrite_rule(
+        '^shops/([0-9]{4})/judge/?$',
+        'index.php?pagename=judge&shop_year=$matches[1]',
+        'top'
+    );
+}
+add_action('init', 'mytheme_add_shop_judge_rewrite_rule');
 
 function mytheme_add_google_tag_manager() {
     ?>

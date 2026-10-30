@@ -54,12 +54,12 @@
 <div id="headContents">
     <h1 id="siteLogo">
         <a href="<?php echo esc_url(BEST_COMPANY_URL); ?>"><img src="<?php echo esc_url(get_theme_file_uri('/assets/images/logoHeader.png')); ?>" alt="" /></a>
-        <?php if (get_query_var('shop_year') != date('Y')) : ?>
+        <?php if (get_query_var('shop_year') !== '') : ?>
             <span class="year-number"><?php echo get_query_var('shop_year'); ?></span>
         <?php endif; ?>
     </h1>
     <?php if (is_post_type_archive('shop') || get_query_var('shop_year') !== '') : ?>
-        <?php if (get_query_var('shop_year') == date('Y')) : ?>
+        <?php if (get_query_var('shop_year') == date('Y') || get_query_var('shop_year') == '') : ?>
             <div class="navigation">
                 <ul>
                     <li><a class="mincho" href="#" class="current">ベスト不動産<br class="sp">カンパニー</a></li>
@@ -77,14 +77,14 @@
                     経営者の資質、地域における確固たる実績、挑戦と成長などの審査を経て、各都道府県において最大3社まで認定されます。
                 </p>
             </div>
-        <?php elseif (is_singular('shop')) : ?>
+        <?php elseif (is_singular('shop') || get_query_var('shop_year') < date('Y')) : ?>
             <div id="mainV_past">
                 <img class="pc" src="<?php echo esc_url(get_theme_file_uri('/assets/images/best/mainV_pastpage_pc.jpg')); ?>" alt="ベスト不動産カンパニー一覧">
                 <img class="sp" src="<?php echo esc_url(get_theme_file_uri('/assets/images/best/mainV_pastpage_sp.jpg')); ?>" alt="ベスト不動産カンパニー一覧">
                 <p id="pastTtl" class="mincho"><?php echo get_query_var('shop_year'); ?>年ベスト不動産カンパニー一覧</p>
             </div>
         <?php endif; ?>
-    <?php elseif (is_singular('shop')) : ?>
+    <?php elseif (is_singular('shop') || is_page('judge')) : ?>
         <div class="navigation">
             <ul>
                 <li><a class="mincho" href="#" class="current">ベスト不動産<br class="sp">カンパニー</a></li>
