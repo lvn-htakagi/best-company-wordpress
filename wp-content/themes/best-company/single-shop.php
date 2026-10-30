@@ -70,7 +70,7 @@ if (have_posts()) :
         });
 
         // ギャラリー：画像IDとキャプションの配列を想定
-        $images = get_post_meta($shop_id, '_shop_images', true);
+        $images = get_post_meta($shop_id, '_shop_gallery_ids', true);
         if (!is_array($images)) {
             $images = [];
         }
@@ -273,8 +273,8 @@ if (have_posts()) :
                         <ul class="fadein">
                             <?php foreach ($images as $image) : ?>
                                 <?php
-                                $gallery_image_id = (int) ($image['image_id'] ?? $image['id'] ?? 0);
-                                $caption = $image['caption'] ?? '';
+                                $gallery_image_id = (int) $image;
+                                $caption = get_post_meta($gallery_image_id, '_wp_attachment_image_alt', true);
                                 ?>
                                 <?php if ($gallery_image_id) : ?>
                                     <li>
