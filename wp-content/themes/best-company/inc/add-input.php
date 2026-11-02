@@ -58,3 +58,54 @@ function mytheme_render_shop_textarea_field($post, $field_name, $label) {
 function mytheme_render_shop_nonce($action, $name) {
     wp_nonce_field($action, $name);
 }
+
+/**
+ * ショップの選択肢を表示
+ * 
+ * @param WP_Post $post 投稿オブジェクト
+ * @param string $field_name フィールド名
+ */
+function mytheme_render_shop_field($post, $field_name) {
+    $selected_shop_id = get_post_meta(
+        $post->ID,
+        '_shop_' . $field_name . '_shop_id',
+        true
+    );
+
+    // 登録済みのショップを取得
+    $shops = get_posts([
+        'post_type'      => 'shop',
+        'post_status'    => ['publish', 'draft', 'private'],
+        'posts_per_page' => -1,
+        'orderby'        => 'ID',
+        'order'          => 'ASC',
+    ]);
+
+    echo '<select name="' . esc_attr($field_name) . '_shop_id" id="' . esc_attr($field_name) . '_shop_id">';
+    echo '<option value="">ショップを選択してください</option>';
+
+    foreach ($shops as $shop) {
+        $shop_name = get_post_meta(
+            $shop->ID,
+            '_shop_name',
+            true
+        );
+
+        // ショップ名が未入力の場合の表示
+        if ($shop_name === '') {
+            $shop_name = 'ショップID: ' . $shop->ID;
+        }
+
+        echo '<option value="' . esc_attr($shop->ID) . '"'
+            . selected(
+                (string) $selected_shop_id,
+                (string) $shop->ID,
+                false
+            )
+            . '>';
+        echo esc_html($shop_name);
+        echo '</option>';
+    }
+
+    echo '</select>';
+}

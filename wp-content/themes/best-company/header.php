@@ -63,7 +63,7 @@
             <div class="navigation">
                 <ul>
                     <li><a class="mincho" href="#" class="current">ベスト不動産<br class="sp">カンパニー</a></li>
-                    <li><a class="mincho" href="#">審査基準に<br class="sp">ついて</a></li>
+                    <li><a class="mincho" href="<?php echo esc_url(BEST_COMPANY_URL)."/".get_query_var('shop_year')."/judge/"; ?>">審査基準に<br class="sp">ついて</a></li>
                 </ul>
             </div>
             <div id="mainV">
@@ -88,7 +88,7 @@
         <div class="navigation">
             <ul>
                 <li><a class="mincho" href="#" class="current">ベスト不動産<br class="sp">カンパニー</a></li>
-                <li><a class="mincho" href="#">審査基準に<br class="sp">ついて</a></li>
+                <li><a class="mincho" href="<?php echo esc_url(BEST_COMPANY_URL)."/".get_query_var('shop_year')."/judge/"; ?>">審査基準に<br class="sp">ついて</a></li>
             </ul>
         </div>
     <?php endif; ?>

@@ -3,8 +3,8 @@ require_once get_theme_file_path('/inc/save-field.php');
 require_once get_theme_file_path('/inc/add-meta-box.php');
 require_once get_theme_file_path('/inc/add-input.php');
 
-define('LVN_MATCH_URL', 'https://www.lvnmatch.com');
-define('BEST_COMPANY_URL', LVN_MATCH_URL . '/best/');
+define('LVN_MATCH_URL', 'https://dev-best-wp.lvnmatch.com');
+define('BEST_COMPANY_URL', LVN_MATCH_URL . '/shops/');
 
 function mytheme_register_shop_post_type() {
     register_post_type('shop', [
@@ -89,6 +89,10 @@ add_action('init', 'mytheme_remove_shop_interview_editor_support', 20);
 
 /**
  * ショップ一覧に複製リンクを追加
+ * 
+ * @param array $actions 投稿のアクションリンク
+ * @param WP_Post $post 投稿オブジェクト
+ * @return array 修正後のアクションリンク
  */
 function mytheme_add_shop_duplicate_link($actions, $post) {
     if ($post->post_type !== 'shop') {
@@ -1940,53 +1944,12 @@ mytheme_add_shop_history_meta_box(
  * ショップ選択欄を表示
  */
 function mytheme_render_history_shop_field($post) {
-    $selected_shop_id = get_post_meta(
-        $post->ID,
-        '_shop_history_shop_id',
-        true
-    );
-
     wp_nonce_field(
         'mytheme_save_history_shop',
         'mytheme_history_shop_nonce'
     );
 
-    // 登録済みのショップを取得
-    $shops = get_posts([
-        'post_type'      => 'shop',
-        'post_status'    => ['publish', 'draft', 'private'],
-        'posts_per_page' => -1,
-        'orderby'        => 'ID',
-        'order'          => 'ASC',
-    ]);
-
-    echo '<select name="history_shop_id" id="history_shop_id">';
-    echo '<option value="">ショップを選択してください</option>';
-
-    foreach ($shops as $shop) {
-        $shop_name = get_post_meta(
-            $shop->ID,
-            '_shop_name',
-            true
-        );
-
-        // ショップ名が未入力の場合の表示
-        if ($shop_name === '') {
-            $shop_name = 'ショップID: ' . $shop->ID;
-        }
-
-        echo '<option value="' . esc_attr($shop->ID) . '"'
-            . selected(
-                (string) $selected_shop_id,
-                (string) $shop->ID,
-                false
-            )
-            . '>';
-        echo esc_html($shop_name);
-        echo '</option>';
-    }
-
-    echo '</select>';
+    mytheme_render_shop_field($post, 'history');
 }
 
 /**
@@ -2310,53 +2273,9 @@ mytheme_add_shop_interview_meta_box(
  * ショップ選択欄を表示
  */
 function mytheme_render_interview_shop_field($post) {
-    $selected_shop_id = get_post_meta(
-        $post->ID,
-        '_shop_interview_shop_id',
-        true
-    );
+    mytheme_render_shop_nonce('mytheme_save_interview_shop', 'mytheme_interview_shop_nonce');
 
-    wp_nonce_field(
-        'mytheme_save_interview_shop',
-        'mytheme_interview_shop_nonce'
-    );
-
-    // 登録済みのショップを取得
-    $shops = get_posts([
-        'post_type'      => 'shop',
-        'post_status'    => ['publish', 'draft', 'private'],
-        'posts_per_page' => -1,
-        'orderby'        => 'ID',
-        'order'          => 'ASC',
-    ]);
-
-    echo '<select name="history_shop_id" id="history_shop_id">';
-    echo '<option value="">ショップを選択してください</option>';
-
-    foreach ($shops as $shop) {
-        $shop_name = get_post_meta(
-            $shop->ID,
-            '_shop_name',
-            true
-        );
-
-        // ショップ名が未入力の場合の表示
-        if ($shop_name === '') {
-            $shop_name = 'ショップID: ' . $shop->ID;
-        }
-
-        echo '<option value="' . esc_attr($shop->ID) . '"'
-            . selected(
-                (string) $selected_shop_id,
-                (string) $shop->ID,
-                false
-            )
-            . '>';
-        echo esc_html($shop_name);
-        echo '</option>';
-    }
-
-    echo '</select>';
+    mytheme_render_shop_field($post, 'interview');
 }
 
 /**
@@ -2389,11 +2308,11 @@ function mytheme_save_interview_shop($post_id) {
         return;
     }
 
-    if (!isset($_POST['history_shop_id'])) {
+    if (!isset($_POST['interview_shop_id'])) {
         return;
     }
 
-    $shop_id = absint($_POST['history_shop_id']);
+    $shop_id = absint($_POST['interview_shop_id']);
 
     // 選択解除なら紐付けを削除
     if ($shop_id === 0) {
