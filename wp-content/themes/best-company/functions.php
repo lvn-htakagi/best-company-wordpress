@@ -46,6 +46,26 @@ function mytheme_register_shop_history_post_type() {
 }
 add_action('init', 'mytheme_register_shop_history_post_type');
 
+/**
+ * インタビューのカスタム投稿タイプを登録
+ */
+function mytheme_register_shop_interview_post_type() {
+    register_post_type('shop_interview', [
+        'labels' => [
+            'name'          => 'インタビュー',
+            'singular_name' => 'インタビュー',
+            'add_new_item'  => 'インタビューを追加',
+            'edit_item'     => 'インタビューを編集',
+        ],
+        'public'       => false,
+        'show_ui'      => true,
+        'show_in_rest' => false,
+        'menu_icon'    => 'dashicons-format-status',
+        'supports'     => [],
+    ]);
+}
+add_action('init', 'mytheme_register_shop_interview_post_type');
+
 function mytheme_remove_shop_editor_support() {
     remove_post_type_support('shop', 'title');
     remove_post_type_support('shop', 'editor');
@@ -59,6 +79,13 @@ function mytheme_remove_shop_history_editor_support() {
     remove_post_type_support('shop_history', 'thumbnail');
 }
 add_action('init', 'mytheme_remove_shop_history_editor_support', 20);
+
+function mytheme_remove_shop_interview_editor_support() {
+    remove_post_type_support('shop_interview', 'title');
+    remove_post_type_support('shop_interview', 'editor');
+    remove_post_type_support('shop_interview', 'thumbnail');
+}
+add_action('init', 'mytheme_remove_shop_interview_editor_support', 20);
 
 /**
  * ショップ一覧に複製リンクを追加
@@ -1673,15 +1700,14 @@ function mytheme_render_shop_gallery_field($post) {
             }
             ?>
             <div class="mytheme-shop-gallery-item"
-                 data-id="<?php echo esc_attr($image_id); ?>">
+                data-id="<?php echo esc_attr($image_id); ?>">
                 <?php
                 echo wp_get_attachment_image(
                     $image_id,
                     'thumbnail'
                 );
                 ?>
-                <button type="button"
-                        class="button mytheme-shop-gallery-remove">
+                <button type="button" class="button mytheme-shop-gallery-remove">
                     削除
                 </button>
             </div>
@@ -2269,6 +2295,230 @@ function mytheme_save_history_detail($post_id) {
     update_post_meta($post_id, '_shop_history_detail', $detail);
 }
 add_action('save_post_shop_history', 'mytheme_save_history_detail');
+
+/**
+ * インタビュー編集画面に「ショップ」を追加
+ */
+mytheme_add_shop_interview_meta_box(
+    'shop_interview_shop',
+    'ショップ',
+    'mytheme_render_interview_shop_field'
+);
+
+
+/**
+ * ショップ選択欄を表示
+ */
+function mytheme_render_interview_shop_field($post) {
+    $selected_shop_id = get_post_meta(
+        $post->ID,
+        '_shop_interview_shop_id',
+        true
+    );
+
+    wp_nonce_field(
+        'mytheme_save_interview_shop',
+        'mytheme_interview_shop_nonce'
+    );
+
+    // 登録済みのショップを取得
+    $shops = get_posts([
+        'post_type'      => 'shop',
+        'post_status'    => ['publish', 'draft', 'private'],
+        'posts_per_page' => -1,
+        'orderby'        => 'ID',
+        'order'          => 'ASC',
+    ]);
+
+    echo '<select name="history_shop_id" id="history_shop_id">';
+    echo '<option value="">ショップを選択してください</option>';
+
+    foreach ($shops as $shop) {
+        $shop_name = get_post_meta(
+            $shop->ID,
+            '_shop_name',
+            true
+        );
+
+        // ショップ名が未入力の場合の表示
+        if ($shop_name === '') {
+            $shop_name = 'ショップID: ' . $shop->ID;
+        }
+
+        echo '<option value="' . esc_attr($shop->ID) . '"'
+            . selected(
+                (string) $selected_shop_id,
+                (string) $shop->ID,
+                false
+            )
+            . '>';
+        echo esc_html($shop_name);
+        echo '</option>';
+    }
+
+    echo '</select>';
+}
+
+/**
+ * 沿革に紐付けるショップIDを保存
+ */
+function mytheme_save_interview_shop($post_id) {
+    // nonceの検証
+    if (
+        !isset($_POST['mytheme_interview_shop_nonce']) ||
+        !wp_verify_nonce(
+            sanitize_text_field(
+                wp_unslash($_POST['mytheme_interview_shop_nonce'])
+            ),
+            'mytheme_save_interview_shop'
+        )
+    ) {
+        return;
+    }
+
+    // 自動保存を除外
+    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+        return;
+    }
+
+    // 沿革の編集権限を確認
+    if (
+        get_post_type($post_id) !== 'shop_interview' ||
+        !current_user_can('edit_post', $post_id)
+    ) {
+        return;
+    }
+
+    if (!isset($_POST['history_shop_id'])) {
+        return;
+    }
+
+    $shop_id = absint($_POST['history_shop_id']);
+
+    // 選択解除なら紐付けを削除
+    if ($shop_id === 0) {
+        delete_post_meta($post_id, '_shop_interview_shop_id');
+        return;
+    }
+
+    // 実在するショップか確認
+    if (
+        get_post_type($shop_id) !== 'shop' ||
+        !current_user_can('edit_post', $shop_id)
+    ) {
+        return;
+    }
+
+    update_post_meta(
+        $post_id,
+        '_shop_interview_shop_id',
+        $shop_id
+    );
+}
+add_action('save_post_shop_interview', 'mytheme_save_interview_shop');
+
+/**
+ * インタビュー編集画面に「質問」を追加
+ */
+mytheme_add_shop_interview_meta_box(
+    'interview_question',
+    '質問',
+    'mytheme_render_interview_question_field'
+);
+
+/**
+ * インタビューの質問の入力欄を表示
+ */
+function mytheme_render_interview_question_field($post) {
+    $question = get_post_meta($post->ID, '_shop_interview_question', true);
+
+    wp_nonce_field('mytheme_save_interview_question', 'mytheme_interview_question_nonce');
+    ?>
+    <input
+        type="text"
+        id="interview_question"
+        name="interview_question"
+        style="width: 100%;"
+        value="<?php echo esc_attr($question); ?>"
+    />
+    <?php
+}
+
+/**
+ * インタビューの質問を保存
+ */
+function mytheme_save_interview_question($post_id) {
+    if (
+        !isset($_POST['mytheme_interview_question_nonce']) ||
+        !wp_verify_nonce(
+            sanitize_text_field(wp_unslash($_POST['mytheme_interview_question_nonce'])),
+            'mytheme_save_interview_question'
+        )
+    ) {
+        return;
+    }
+
+    $question = sanitize_textarea_field(wp_unslash($_POST['interview_question']));
+
+    if ($question === '') {
+        delete_post_meta($post_id, '_shop_interview_question');
+        return;
+    }
+
+    update_post_meta($post_id, '_shop_interview_question', $question);
+}
+add_action('save_post_shop_interview', 'mytheme_save_interview_question');
+
+/**
+ * インタビュー編集画面に「回答」を追加
+ */
+mytheme_add_shop_interview_meta_box(
+    'interview_answer',
+    '回答',
+    'mytheme_render_interview_answer_field'
+);
+
+/**
+ * インタビューの回答の入力欄を表示
+ */
+function mytheme_render_interview_answer_field($post) {
+    $answer = get_post_meta($post->ID, '_shop_interview_answer', true);
+
+    wp_nonce_field('mytheme_save_interview_answer', 'mytheme_interview_answer_nonce');
+    ?>
+    <label for="interview_answer">回答</label>
+    <textarea
+        id="interview_answer"
+        name="interview_answer"
+        style="width: 100%;"
+    ><?php echo esc_textarea($answer); ?></textarea>
+    <?php
+}
+
+/**
+ * インタビューの回答を保存
+ */
+function mytheme_save_interview_answer($post_id) {
+    if (
+        !isset($_POST['mytheme_interview_answer_nonce']) ||
+        !wp_verify_nonce(
+            sanitize_text_field(wp_unslash($_POST['mytheme_interview_answer_nonce'])),
+            'mytheme_save_interview_answer'
+        )
+    ) {
+        return;
+    }
+
+    $answer = sanitize_textarea_field(wp_unslash($_POST['interview_answer']));
+
+    if ($answer === '') {
+        delete_post_meta($post_id, '_shop_interview_answer');
+        return;
+    }
+
+    update_post_meta($post_id, '_shop_interview_answer', $answer);
+}
+add_action('save_post_shop_interview', 'mytheme_save_interview_answer');
 
 /**
  * ショップ一覧の列を設定

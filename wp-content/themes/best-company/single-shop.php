@@ -40,7 +40,19 @@ if (have_posts()) :
         $catch_copy = get_post_meta($shop_id, '_shop_catch_copy', true);
 
         // インタビュー
-        $interview = get_post_meta($shop_id, '_shop_interview', true);
+        $interviews = get_posts([
+            'post_type'      => 'shop_interview',
+            'post_status'    => 'publish',
+            'posts_per_page' => -1,
+            'meta_query'     => [
+                [
+                    'key'     => '_shop_interview_shop_id',
+                    'value'   => $shop_id,
+                    'compare' => '=',
+                    'type'    => 'NUMERIC',
+                ],
+            ]
+        ]);
 
         // 沿革：既存の shop_history CPT を利用
         $histories = get_posts([
@@ -181,7 +193,12 @@ if (have_posts()) :
                         </div>
                         <div id="interview">
                             <p>インタビュー</p>
-                            <pre><?php echo esc_html($interview); ?></pre>
+                            <dl>
+                                <?php foreach ($interviews as $interview) : ?>
+                                    <dt><?php echo get_post_meta($interview->ID, '_shop_interview_question', true); ?></dt>
+                                    <dd><pre><?php echo esc_html(get_post_meta($interview->ID, '_shop_interview_answer', true)); ?></pre></dd>
+                                <?php endforeach; ?>
+                            </dl>
                         </div>
                     </div>
                 </section>
@@ -205,8 +222,7 @@ if (have_posts()) :
                         <dt>URL</dt>
                         <dd>
                             <?php if ($company_fields['url'] && wp_http_validate_url($company_fields['url'])) : ?>
-                                <a href="<?php echo esc_url($company_fields['url']); ?>"
-                                   target="_blank" rel="noopener noreferrer">
+                                <a href="<?php echo esc_url($company_fields['url']); ?>" target="_blank" rel="noopener noreferrer">
                                     <?php echo esc_html($company_fields['url']); ?>
                                 </a>
                             <?php else : ?>
