@@ -6,6 +6,26 @@ require_once get_theme_file_path('/inc/add-input.php');
 define('LVN_MATCH_URL', 'https://dev-best-wp.lvnmatch.com');
 define('BEST_COMPANY_URL', LVN_MATCH_URL . '/shops/');
 
+function mytheme_remove_comments_menu() {
+    remove_menu_page('edit-comments.php');
+}
+add_action('admin_menu', 'mytheme_remove_comments_menu');
+
+function mytheme_remove_posts_menu() {
+    remove_menu_page('edit.php');
+}
+add_action('admin_menu', 'mytheme_remove_posts_menu');
+
+function mytheme_remove_pages_menu() {
+    remove_menu_page('edit.php?post_type=page');
+}
+add_action('admin_menu', 'mytheme_remove_pages_menu');
+
+function mytheme_remove_themes_menu() {
+    remove_menu_page('themes.php');
+}
+add_action('admin_menu', 'mytheme_remove_themes_menu');
+
 function mytheme_register_shop_post_type() {
     register_post_type('shop', [
         'labels' => [
@@ -831,40 +851,39 @@ function mytheme_save_shop_introduction($post_id) {
 add_action('save_post_shop', 'mytheme_save_shop_introduction');
 
 /**
- * ショップ編集画面に「インタビュー」を追加
+ * ショップ編集画面に「カスタムID」を追加
  */
 mytheme_add_shop_meta_box(
-    'shop_interview',
-    'インタビュー',
-    'mytheme_render_shop_interview_field'
+    'shop_custome_id',
+    'カスタムID',
+    'mytheme_render_shop_custome_id_field'
 );
 
 /**
- * インタビューの入力欄を表示
+ * カスタムIDの入力欄を表示
  */
-function mytheme_render_shop_interview_field($post) {
-    $interview = get_post_meta($post->ID, '_shop_interview', true);
+function mytheme_render_shop_custome_id_field($post) {
+    mytheme_render_shop_nonce(
+        'mytheme_save_shop_custome_id',
+        'mytheme_shop_custome_id_nonce'
+    );
 
-    wp_nonce_field('mytheme_save_shop_interview', 'mytheme_shop_interview_nonce');
-    ?>
-    <label for="shop_interview">インタビュー</label>
-    <textarea
-        id="shop_interview"
-        name="shop_interview"
-        style="width: 100%;"
-    ><?php echo esc_textarea($interview); ?></textarea>
-    <?php
+    mytheme_render_shop_text_field(
+        $post,
+        'shop_custome_id',
+        'カスタムID'
+    );
 }
 
 /**
- * インタビューを保存
+ * カスタムIDを保存
  */
-function mytheme_save_shop_interview($post_id) {
+function mytheme_save_shop_custome_id($post_id) {
     if (
-        !isset($_POST['mytheme_shop_interview_nonce']) ||
+        !isset($_POST['mytheme_shop_custome_id_nonce']) ||
         !wp_verify_nonce(
-            sanitize_text_field(wp_unslash($_POST['mytheme_shop_interview_nonce'])),
-            'mytheme_save_shop_interview'
+            sanitize_text_field(wp_unslash($_POST['mytheme_shop_custome_id_nonce'])),
+            'mytheme_save_shop_custome_id'
         )
     ) {
         return;
@@ -874,16 +893,16 @@ function mytheme_save_shop_interview($post_id) {
         return;
     }
 
-    $interview = sanitize_text_field(wp_unslash($_POST['shop_interview']));
+    $custome_id = sanitize_text_field(wp_unslash($_POST['shop_custome_id']));
 
-    if ($interview === '') {
-        delete_post_meta($post_id, '_shop_interview');
+    if ($custome_id === '') {
+        delete_post_meta($post_id, '_shop_custome_id');
         return;
     }
 
-    update_post_meta($post_id, '_shop_interview', $interview);
+    update_post_meta($post_id, '_shop_custome_id', $custome_id);
 }
-add_action('save_post_shop', 'mytheme_save_shop_interview');
+add_action('save_post_shop', 'mytheme_save_shop_custome_id');
 
 /**
  * ショップ編集画面に「会社名(企業概要)」を追加
