@@ -24,6 +24,12 @@ jQuery(function ($) {
       $("#shop-face-id").val(attachment.id);
       $("#shop-face-removed").val("0");
 
+      // 画像サイズをチェック
+      if (attachment.width > 1300 || attachment.height > 1300) {
+        alert("画像は1300px × 1300px以内にしてください。");
+        return;
+      }
+
       $("#shop-face-image-preview").html(
         $("<img>", {
           src: attachment.url,

@@ -58,12 +58,15 @@
             <span class="year-number"><?php echo get_query_var('shop_year'); ?></span>
         <?php endif; ?>
     </h1>
-    <?php if (is_post_type_archive('shop') || get_query_var('shop_year') !== '') : ?>
+    <?php if (
+        !is_page('judge') &&
+        (is_post_type_archive('shop') || get_query_var('shop_year') !== '')
+    ) : ?>
         <?php if (get_query_var('shop_year') == date('Y') || get_query_var('shop_year') == '') : ?>
             <div class="navigation">
                 <ul>
-                    <li><a class="mincho" href="#" class="current">ベスト不動産<br class="sp">カンパニー</a></li>
-                    <li><a class="mincho" href="<?php echo esc_url(BEST_COMPANY_URL)."/".get_query_var('shop_year')."/judge/"; ?>">審査基準に<br class="sp">ついて</a></li>
+                    <li><a class="mincho" href="<?php echo esc_url(BEST_COMPANY_URL).(get_query_var('shop_year') ?: date('Y')); ?>"" class="current">ベスト不動産<br class="sp">カンパニー</a></li>
+                    <li><a class="mincho" href="<?php echo esc_url(BEST_COMPANY_URL).(get_query_var('shop_year') ?: date('Y'))."/judge/"; ?>">審査基準に<br class="sp">ついて</a></li>
                 </ul>
             </div>
             <div id="mainV">
@@ -87,8 +90,8 @@
     <?php elseif (is_singular('shop') || is_page('judge')) : ?>
         <div class="navigation">
             <ul>
-                <li><a class="mincho" href="#" class="current">ベスト不動産<br class="sp">カンパニー</a></li>
-                <li><a class="mincho" href="<?php echo esc_url(BEST_COMPANY_URL)."/".get_query_var('shop_year')."/judge/"; ?>">審査基準に<br class="sp">ついて</a></li>
+                <li><a class="mincho" href="<?php echo esc_url(BEST_COMPANY_URL).(get_query_var('shop_year') ?: date('Y')); ?>" class="current">ベスト不動産<br class="sp">カンパニー</a></li>
+                <li><a class="mincho" href="<?php echo esc_url(BEST_COMPANY_URL).(get_query_var('shop_year') ?: date('Y'))."/judge/"; ?>">審査基準に<br class="sp">ついて</a></li>
             </ul>
         </div>
     <?php endif; ?>
