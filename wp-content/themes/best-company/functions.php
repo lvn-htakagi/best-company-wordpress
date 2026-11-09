@@ -2,6 +2,7 @@
 require_once get_theme_file_path('/inc/save-field.php');
 require_once get_theme_file_path('/inc/content/shop/meta-boxes.php');
 require_once get_theme_file_path('/inc/content/shop/fields.php');
+require_once get_theme_file_path('/inc/content/shop/save.php');
 
 define('LVN_MATCH_URL', 'https://dev-best-wp.lvnmatch.com');
 define('BEST_COMPANY_URL', LVN_MATCH_URL . '/shops/');
@@ -207,64 +208,6 @@ function mytheme_duplicate_shop() {
 add_action('admin_action_mytheme_duplicate_shop', 'mytheme_duplicate_shop');
 
 /**
- * 名前を保存
- */
-function mytheme_save_shop_name($post_id) {
-    if (
-        !isset($_POST['mytheme_shop_name_nonce']) ||
-        !wp_verify_nonce(
-            sanitize_text_field(wp_unslash($_POST['mytheme_shop_name_nonce'])),
-            'mytheme_save_shop_name'
-        )
-    ) {
-        return;
-    }
-
-    if (!mytheme_can_save_shop($post_id)) {
-        return;
-    }
-
-    $name = sanitize_text_field(wp_unslash($_POST['shop_name']));
-
-    if ($name === '') {
-        delete_post_meta($post_id, '_shop_name');
-        return;
-    }
-
-    update_post_meta($post_id, '_shop_name', $name);
-}
-add_action('save_post_shop', 'mytheme_save_shop_name');
-
-/**
- * 代表者名を保存
- */
-function mytheme_save_shop_president($post_id) {
-    if (
-        !isset($_POST['mytheme_shop_president_nonce']) ||
-        !wp_verify_nonce(
-            sanitize_text_field(wp_unslash($_POST['mytheme_shop_president_nonce'])),
-            'mytheme_save_shop_president'
-        )
-    ) {
-        return;
-    }
-
-    if (!mytheme_can_save_shop($post_id)) {
-        return;
-    }
-
-    $president = sanitize_text_field(wp_unslash($_POST['shop_president']));
-
-    if ($president === '') {
-        delete_post_meta($post_id, '_shop_president');
-        return;
-    }
-
-    update_post_meta($post_id, '_shop_president', $president);
-}
-add_action('save_post_shop', 'mytheme_save_shop_president');
-
-/**
  * 経歴を保存
  */
 function mytheme_save_shop_career($post_id) {
@@ -278,7 +221,7 @@ function mytheme_save_shop_career($post_id) {
         return;
     }
 
-    if (!mytheme_can_save_shop($post_id)) {
+    if (!old_mytheme_can_save_shop($post_id)) {
         return;
     }
 
@@ -333,7 +276,7 @@ function mytheme_save_shop_face($post_id) {
         return;
     }
 
-    if (!mytheme_can_save_shop($post_id)) {
+    if (!old_mytheme_can_save_shop($post_id)) {
         return;
     }
 
@@ -404,7 +347,7 @@ function mytheme_save_shop_image($post_id) {
         return;
     }
 
-    if (!mytheme_can_save_shop($post_id)) {
+    if (!old_mytheme_can_save_shop($post_id)) {
         return;
     }
 
@@ -451,7 +394,7 @@ function mytheme_save_shop_prefecture($post_id) {
         return;
     }
 
-    if (!mytheme_can_save_shop($post_id)) {
+    if (!old_mytheme_can_save_shop($post_id)) {
         return;
     }
 
@@ -490,7 +433,7 @@ function mytheme_save_shop_year($post_id) {
         return;
     }
 
-    if (!mytheme_can_save_shop($post_id)) {
+    if (!old_mytheme_can_save_shop($post_id)) {
         return;
     }
 
@@ -527,7 +470,7 @@ function mytheme_save_shop_comment($post_id) {
         return;
     }
 
-    if (!mytheme_can_save_shop($post_id)) {
+    if (!old_mytheme_can_save_shop($post_id)) {
         return;
     }
 
@@ -556,7 +499,7 @@ function mytheme_save_shop_introduction($post_id) {
         return;
     }
 
-    if (!mytheme_can_save_shop($post_id)) {
+    if (!old_mytheme_can_save_shop($post_id)) {
         return;
     }
 
@@ -585,7 +528,7 @@ function mytheme_save_shop_custome_id($post_id) {
         return;
     }
 
-    if (!mytheme_can_save_shop($post_id)) {
+    if (!old_mytheme_can_save_shop($post_id)) {
         return;
     }
 
@@ -614,7 +557,7 @@ function mytheme_save_shop_company_name($post_id) {
         return;
     }
 
-    if (!mytheme_can_save_shop($post_id)) {
+    if (!old_mytheme_can_save_shop($post_id)) {
         return;
     }
 
@@ -643,7 +586,7 @@ function mytheme_save_shop_address($post_id) {
         return;
     }
 
-    if (!mytheme_can_save_shop($post_id)) {
+    if (!old_mytheme_can_save_shop($post_id)) {
         return;
     }
 
@@ -672,7 +615,7 @@ function mytheme_save_shop_tel($post_id) {
         return;
     }
 
-    if (!mytheme_can_save_shop($post_id)) {
+    if (!old_mytheme_can_save_shop($post_id)) {
         return;
     }
 
@@ -710,7 +653,7 @@ function mytheme_save_shop_fax($post_id) {
         return;
     }
 
-    if (!mytheme_can_save_shop($post_id)) {
+    if (!old_mytheme_can_save_shop($post_id)) {
         return;
     }
 
@@ -739,7 +682,7 @@ function mytheme_save_shop_url($post_id) {
         return;
     }
 
-    if (!mytheme_can_save_shop($post_id)) {
+    if (!old_mytheme_can_save_shop($post_id)) {
         return;
     }
 
@@ -768,7 +711,7 @@ function mytheme_save_shop_capital($post_id) {
         return;
     }
 
-    if (!mytheme_can_save_shop($post_id)) {
+    if (!old_mytheme_can_save_shop($post_id)) {
         return;
     }
 
@@ -797,7 +740,7 @@ function mytheme_save_shop_net_sales($post_id) {
         return;
     }
 
-    if (!mytheme_can_save_shop($post_id)) {
+    if (!old_mytheme_can_save_shop($post_id)) {
         return;
     }
 
@@ -826,7 +769,7 @@ function mytheme_save_shop_business_content($post_id) {
         return;
     }
 
-    if (!mytheme_can_save_shop($post_id)) {
+    if (!old_mytheme_can_save_shop($post_id)) {
         return;
     }
 
@@ -855,7 +798,7 @@ function mytheme_save_shop_license_number($post_id) {
         return;
     }
 
-    if (!mytheme_can_save_shop($post_id)) {
+    if (!old_mytheme_can_save_shop($post_id)) {
         return;
     }
 
@@ -900,7 +843,7 @@ function mytheme_save_shop_employee($post_id) {
         return;
     }
 
-    if (!mytheme_can_save_shop($post_id)) {
+    if (!old_mytheme_can_save_shop($post_id)) {
         return;
     }
 
@@ -929,7 +872,7 @@ function mytheme_save_shop_organizations($post_id) {
         return;
     }
 
-    if (!mytheme_can_save_shop($post_id)) {
+    if (!old_mytheme_can_save_shop($post_id)) {
         return;
     }
 
@@ -958,7 +901,7 @@ function mytheme_save_shop_establishment($post_id) {
         return;
     }
 
-    if (!mytheme_can_save_shop($post_id)) {
+    if (!old_mytheme_can_save_shop($post_id)) {
         return;
     }
 
@@ -987,7 +930,7 @@ function mytheme_save_shop_base($post_id) {
         return;
     }
 
-    if (!mytheme_can_save_shop($post_id)) {
+    if (!old_mytheme_can_save_shop($post_id)) {
         return;
     }
 
@@ -1016,7 +959,7 @@ function mytheme_save_shop_relationship($post_id) {
         return;
     }
 
-    if (!mytheme_can_save_shop($post_id)) {
+    if (!old_mytheme_can_save_shop($post_id)) {
         return;
     }
 

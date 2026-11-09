@@ -1,5 +1,5 @@
 <?php
-function mytheme_can_save_shop($post_id) {
+function old_mytheme_can_save_shop($post_id) {
     if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
         return false;
     }
