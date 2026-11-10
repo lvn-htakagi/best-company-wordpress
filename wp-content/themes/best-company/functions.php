@@ -3,6 +3,7 @@ require_once get_theme_file_path('/inc/save-field.php');
 require_once get_theme_file_path('/inc/content/shop/meta-boxes.php');
 require_once get_theme_file_path('/inc/content/shop/fields.php');
 require_once get_theme_file_path('/inc/content/shop/save.php');
+require_once get_theme_file_path('/inc/content/history/meta-boxes.php');
 
 define('LVN_MATCH_URL', 'https://dev-best-wp.lvnmatch.com');
 define('BEST_COMPANY_URL', LVN_MATCH_URL . '/shops/');
@@ -518,16 +519,6 @@ function mytheme_save_shop_gallery($post_id) {
 add_action('save_post_shop', 'mytheme_save_shop_gallery');
 
 /**
- * 沿革編集画面に「ショップ」を追加
- */
-mytheme_add_shop_history_meta_box(
-    'shop_history_shop',
-    'ショップ',
-    'mytheme_render_history_shop_field'
-);
-
-
-/**
  * ショップ選択欄を表示
  */
 function mytheme_render_history_shop_field($post) {
@@ -536,7 +527,7 @@ function mytheme_render_history_shop_field($post) {
         'mytheme_history_shop_nonce'
     );
 
-    mytheme_render_shop_field($post, 'history');
+    mytheme_render_shop_selector_field($post, 'history');
 }
 
 /**
@@ -596,15 +587,6 @@ function mytheme_save_history_shop($post_id) {
     );
 }
 add_action('save_post_shop_history', 'mytheme_save_history_shop');
-
-/**
- * 沿革編集画面に「年」を追加
- */
-mytheme_add_shop_history_meta_box(
-    'history_year',
-    '年',
-    'mytheme_render_history_year_field'
-);
 
 /**
  * 年の選択肢
@@ -690,15 +672,6 @@ function mytheme_save_history_year($post_id) {
     }
 }
 add_action('save_post_shop_history', 'mytheme_save_history_year');
-
-/**
- * 沿革編集画面に「月」を追加
- */
-mytheme_add_shop_history_meta_box(
-    'history_month',
-    '月',
-    'mytheme_render_history_month_field'
-);
 
 /**
  * 月の選択肢
@@ -795,15 +768,6 @@ function mytheme_save_history_month($post_id) {
 add_action('save_post_shop_history', 'mytheme_save_history_month');
 
 /**
- * 沿革編集画面に「沿革」を追加
- */
-mytheme_add_shop_history_meta_box(
-    'history_detail',
-    '沿革',
-    'mytheme_render_history_detail_field'
-);
-
-/**
  * 沿革の入力欄を表示
  */
 function mytheme_render_history_detail_field($post) {
@@ -860,9 +824,9 @@ mytheme_add_shop_interview_meta_box(
  * ショップ選択欄を表示
  */
 function mytheme_render_interview_shop_field($post) {
-    mytheme_render_shop_nonce('mytheme_save_interview_shop', 'mytheme_interview_shop_nonce');
+    wp_nonce_field('mytheme_save_interview_shop', 'mytheme_interview_shop_nonce');
 
-    mytheme_render_shop_field($post, 'interview');
+    mytheme_render_shop_selector_field($post, 'interview');
 }
 
 /**

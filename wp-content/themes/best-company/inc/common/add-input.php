@@ -6,7 +6,7 @@
  * @param string $field_name フィールド名
  * @param string $label ラベル
  */
-function mytheme_render_shop_text_field($post, $field_name, $label) {
+function mytheme_render_text_field($post, $field_name, $label) {
     $meta_key = '_' . $field_name;
     $value = get_post_meta($post->ID, $meta_key, true);
     ?>
@@ -32,7 +32,7 @@ function mytheme_render_shop_text_field($post, $field_name, $label) {
  * @param string $field_name フィールド名
  * @param string $label ラベル
  */
-function mytheme_render_shop_textarea_field($post, $field_name, $label) {
+function mytheme_render_textarea_field($post, $field_name, $label) {
     $meta_key = '_' . $field_name;
     $value = get_post_meta($post->ID, $meta_key, true);
     ?>
@@ -50,22 +50,12 @@ function mytheme_render_shop_textarea_field($post, $field_name, $label) {
 }
 
 /**
- * ショップ用nonceを表示
- * 
- * @param string $action アクション名
- * @param string $name ノンスフィールド名
- */
-function mytheme_render_shop_nonce($action, $name) {
-    wp_nonce_field($action, $name);
-}
-
-/**
  * ショップの選択肢を表示
  * 
  * @param WP_Post $post 投稿オブジェクト
  * @param string $field_name フィールド名
  */
-function mytheme_render_shop_field($post, $field_name) {
+function mytheme_render_shop_selector_field($post, $field_name) {
     $selected_shop_id = get_post_meta(
         $post->ID,
         '_shop_' . $field_name . '_shop_id',

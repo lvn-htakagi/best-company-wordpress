@@ -46,12 +46,12 @@ require_once get_theme_file_path('/inc/common/add-input.php');
  */
 
 function mytheme_render_shop_name_field($post) {
-    mytheme_render_shop_nonce(
+    wp_nonce_field(
         'mytheme_save_shop_name',
         'mytheme_shop_name_nonce'
     );
 
-    mytheme_render_shop_text_field(
+    mytheme_render_text_field(
         $post,
         'shop_name',
         '名前'
@@ -64,12 +64,12 @@ function mytheme_render_shop_name_field($post) {
  * @param WP_Post $post 投稿オブジェクト
  */
 function mytheme_render_shop_president_field($post) {
-    mytheme_render_shop_nonce(
+    wp_nonce_field(
         'mytheme_save_shop_president',
         'mytheme_shop_president_nonce'
     );
     
-    mytheme_render_shop_text_field(
+    mytheme_render_text_field(
         $post,
         'shop_president',
         '代表者名'
@@ -82,17 +82,16 @@ function mytheme_render_shop_president_field($post) {
  * @param WP_Post $post 投稿オブジェクト
  */
 function mytheme_render_shop_career_field($post) {
-    $comment = get_post_meta($post->ID, '_shop_career', true);
+    wp_nonce_field(
+        'mytheme_save_shop_career',
+        'mytheme_shop_career_nonce'
+    );
 
-    wp_nonce_field('mytheme_save_shop_career', 'mytheme_shop_career_nonce');
-    ?>
-    <label for="shop_career">経歴</label>
-    <textarea
-        id="shop_career"
-        name="shop_career"
-        style="width: 100%;"
-    ><?php echo esc_textarea($comment); ?></textarea>
-    <?php
+    mytheme_render_textarea_field(
+        $post,
+        'shop_career',
+        '経歴'
+    );
 }
 
 /**
@@ -174,12 +173,12 @@ function mytheme_get_prefectures() {
  * @param WP_Post $post 投稿オブジェクト
  */
 function mytheme_render_shop_prefecture_field($post) {
-    $prefecture = get_post_meta($post->ID, '_shop_prefecture', true);
-
     wp_nonce_field(
         'mytheme_save_shop_prefecture',
         'mytheme_shop_prefecture_nonce'
     );
+
+    $prefecture = get_post_meta($post->ID, '_shop_prefecture', true);
 
     echo '<select id="shop_prefecture" name="shop_prefecture">';
     echo '<option value="">選択してください</option>';
@@ -224,17 +223,16 @@ function mytheme_render_shop_year_field($post) {
  * @param WP_Post $post 投稿オブジェクト
  */
 function mytheme_render_shop_comment_field($post) {
-    $comment = get_post_meta($post->ID, '_shop_comment', true);
+    wp_nonce_field(
+        'mytheme_save_shop_comment',
+        'mytheme_shop_comment_nonce'
+    );
 
-    wp_nonce_field('mytheme_save_shop_comment', 'mytheme_shop_comment_nonce');
-    ?>
-    <label for="shop_comment">編集部コメント</label>
-    <textarea
-        id="shop_comment"
-        name="shop_comment"
-        style="width: 100%;"
-    ><?php echo esc_textarea($comment); ?></textarea>
-    <?php
+    mytheme_render_textarea_field(
+        $post,
+        'shop_comment',
+        '編集部コメント'
+    );
 }
 
 /**
@@ -243,17 +241,16 @@ function mytheme_render_shop_comment_field($post) {
  * @param WP_Post $post 投稿オブジェクト
  */
 function mytheme_render_shop_introduction_field($post) {
-    $introduction = get_post_meta($post->ID, '_shop_introduction', true);
+    wp_nonce_field(
+        'mytheme_save_shop_introduction',
+        'mytheme_shop_introduction_nonce'
+    );
 
-    wp_nonce_field('mytheme_save_shop_introduction', 'mytheme_shop_introduction_nonce');
-    ?>
-    <label for="shop_introduction">企業紹介</label>
-    <textarea
-        id="shop_introduction"
-        name="shop_introduction"
-        style="width: 100%;"
-    ><?php echo esc_textarea($introduction); ?></textarea>
-    <?php
+    mytheme_render_textarea_field(
+        $post,
+        'shop_introduction',
+        '企業紹介'
+    );
 }
 
 /**
@@ -262,12 +259,12 @@ function mytheme_render_shop_introduction_field($post) {
  * @param WP_Post $post 投稿オブジェクト
  */
 function mytheme_render_shop_custome_id_field($post) {
-    mytheme_render_shop_nonce(
+    wp_nonce_field(
         'mytheme_save_shop_custome_id',
         'mytheme_shop_custome_id_nonce'
     );
 
-    mytheme_render_shop_text_field(
+    mytheme_render_text_field(
         $post,
         'shop_custome_id',
         'カスタムID'
@@ -373,12 +370,12 @@ function mytheme_render_shop_gallery_field($post) {
  * 会社名の入力欄を表示
  */
 function mytheme_render_shop_company_name_field($post) {
-    mytheme_render_shop_nonce(
+    wp_nonce_field(
         'mytheme_save_shop_company_name',
         'mytheme_shop_company_name_nonce'
     );
 
-    mytheme_render_shop_text_field(
+    mytheme_render_text_field(
         $post,
         'shop_company_name',
         '会社名'
@@ -391,12 +388,12 @@ function mytheme_render_shop_company_name_field($post) {
  * @param WP_Post $post 投稿オブジェクト
  */
 function mytheme_render_shop_address_field($post) {
-    mytheme_render_shop_nonce(
+    wp_nonce_field(
         'mytheme_save_shop_address',
         'mytheme_shop_address_nonce'
     );
 
-    mytheme_render_shop_text_field(
+    mytheme_render_text_field(
         $post,
         'shop_address',
         '所在地(企業概要)'
@@ -409,12 +406,12 @@ function mytheme_render_shop_address_field($post) {
  * @param WP_Post $post 投稿オブジェクト
  */
 function mytheme_render_shop_tel_field($post) {
-    mytheme_render_shop_nonce(
+    wp_nonce_field(
         'mytheme_save_shop_tel',
         'mytheme_shop_tel_nonce'
     );
 
-    mytheme_render_shop_text_field(
+    mytheme_render_text_field(
         $post,
         'shop_tel',
         '電話番号(企業概要)'
@@ -427,12 +424,12 @@ function mytheme_render_shop_tel_field($post) {
  * @param WP_Post $post 投稿オブジェクト
  */
 function mytheme_render_shop_fax_field($post) {
-    mytheme_render_shop_nonce(
+    wp_nonce_field(
         'mytheme_save_shop_fax',
         'mytheme_shop_fax_nonce'
     );
 
-    mytheme_render_shop_text_field(
+    mytheme_render_text_field(
         $post,
         'shop_fax',
         'FAX番号(企業概要)'
@@ -445,12 +442,12 @@ function mytheme_render_shop_fax_field($post) {
  * @param WP_Post $post 投稿オブジェクト
  */
 function mytheme_render_shop_url_field($post) {
-    mytheme_render_shop_nonce(
+    wp_nonce_field(
         'mytheme_save_shop_url',
         'mytheme_shop_url_nonce'
     );
 
-    mytheme_render_shop_text_field(
+    mytheme_render_text_field(
         $post,
         'shop_url',
         'URL(企業概要)'
@@ -463,12 +460,12 @@ function mytheme_render_shop_url_field($post) {
  * @param WP_Post $post 投稿オブジェクト
  */
 function mytheme_render_shop_capital_field($post) {
-    mytheme_render_shop_nonce(
+    wp_nonce_field(
         'mytheme_save_shop_capital',
         'mytheme_shop_capital_nonce'
     );
 
-    mytheme_render_shop_text_field(
+    mytheme_render_text_field(
         $post,
         'shop_capital',
         '資本金(企業概要)'
@@ -481,12 +478,12 @@ function mytheme_render_shop_capital_field($post) {
  * @param WP_Post $post 投稿オブジェクト
  */
 function mytheme_render_shop_net_sales_field($post) {
-    mytheme_render_shop_nonce(
+    wp_nonce_field(
         'mytheme_save_shop_net_sales',
         'mytheme_shop_net_sales_nonce'
     );
 
-    mytheme_render_shop_text_field(
+    mytheme_render_text_field(
         $post,
         'shop_net_sales',
         '売上高(企業概要)'
@@ -499,12 +496,12 @@ function mytheme_render_shop_net_sales_field($post) {
  * @param WP_Post $post 投稿オブジェクト
  */
 function mytheme_render_shop_business_content_field($post) {
-    mytheme_render_shop_nonce(
+    wp_nonce_field(
         'mytheme_save_shop_business_content',
         'mytheme_shop_business_content_nonce'
     );
 
-    mytheme_render_shop_text_field(
+    mytheme_render_textarea_field(
         $post,
         'shop_business_content',
         '事業内容(企業概要)'
@@ -517,12 +514,12 @@ function mytheme_render_shop_business_content_field($post) {
  * @param WP_Post $post 投稿オブジェクト
  */
 function mytheme_render_shop_license_number_field($post) {
-    mytheme_render_shop_nonce(
+    wp_nonce_field(
         'mytheme_save_shop_license_number',
         'mytheme_shop_license_number_nonce'
     );
 
-    mytheme_render_shop_text_field(
+    mytheme_render_textarea_field(
         $post,
         'shop_license_number',
         '許認可・免許番号(企業概要)'
@@ -535,12 +532,12 @@ function mytheme_render_shop_license_number_field($post) {
  * @param WP_Post $post 投稿オブジェクト
  */
 function mytheme_render_shop_organizations_field($post) {
-    mytheme_render_shop_nonce(
+    wp_nonce_field(
         'mytheme_save_shop_organizations',
         'mytheme_shop_organizations_nonce'
     );
 
-    mytheme_render_shop_text_field(
+    mytheme_render_textarea_field(
         $post,
         'shop_organizations',
         '加盟団体(企業概要)'
@@ -553,12 +550,12 @@ function mytheme_render_shop_organizations_field($post) {
  * @param WP_Post $post 投稿オブジェクト
  */
 function mytheme_render_shop_employee_field($post) {
-    mytheme_render_shop_nonce(
+    wp_nonce_field(
         'mytheme_save_shop_employee',
         'mytheme_shop_employee_nonce'
     );
 
-    mytheme_render_shop_text_field(
+    mytheme_render_text_field(
         $post,
         'shop_employee',
         '従業員数(企業概要)'
@@ -572,12 +569,12 @@ add_action('save_post_shop', 'mytheme_save_shop_employee');
  * @param WP_Post $post 投稿オブジェクト
  */
 function mytheme_render_shop_establishment_field($post) {
-    mytheme_render_shop_nonce(
+    wp_nonce_field(
         'mytheme_save_shop_establishment',
         'mytheme_shop_establishment_nonce'
     );
 
-    mytheme_render_shop_text_field(
+    mytheme_render_text_field(
         $post,
         'shop_establishment',
         '設立年月(企業概要)'
@@ -590,12 +587,12 @@ function mytheme_render_shop_establishment_field($post) {
  * @param WP_Post $post 投稿オブジェクト
  */
 function mytheme_render_shop_base_field($post) {
-    mytheme_render_shop_nonce(
+    wp_nonce_field(
         'mytheme_save_shop_base',
         'mytheme_shop_base_nonce'
     );
 
-    mytheme_render_shop_textarea_field(
+    mytheme_render_textarea_field(
         $post,
         'shop_base',
         '拠点(企業概要)'
@@ -608,12 +605,12 @@ function mytheme_render_shop_base_field($post) {
  * @param WP_Post $post 投稿オブジェクト
  */
 function mytheme_render_shop_relationship_field($post) {
-    mytheme_render_shop_nonce(
+    wp_nonce_field(
         'mytheme_save_shop_relationship',
         'mytheme_shop_relationship_nonce'
     );
 
-    mytheme_render_shop_textarea_field(
+    mytheme_render_textarea_field(
         $post,
         'shop_relationship',
         '関係会社(企業概要)'
