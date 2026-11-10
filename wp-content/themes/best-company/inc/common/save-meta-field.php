@@ -78,24 +78,28 @@ function mytheme_save_text_meta_field(
 }
 
 /**
- * セレクトボックスの入力項目を保存する共通関数
+ * セレクトボックスの選択内容を保存する共通関数
  *
  * @param int    $post_id      投稿ID
  * @param string $nonce_name   nonceのフィールド名
  * @param string $nonce_action nonceのアクション名
  * @param string $field_name   入力フィールド名
  * @param string $meta_key     保存するメタキー
- * @param string $post_type    投稿タイプ
- * @return void
+ * @param string $post_type    保存元の投稿タイプ
+ * @param string $value_type   選択値の種類（number / post）
+ * @param string $related_type 紐付け先の投稿タイプ
  */
-function mytheme_save_select_meta_field(
+function mytheme_save_select_field(
     int $post_id,
     string $nonce_name,
     string $nonce_action,
     string $field_name,
     string $meta_key,
-    string $post_type
+    string $post_type,
+    string $value_type = 'number',
+    string $related_type = ''
 ): void {
+    // nonceの検証
     if (
         !isset($_POST[$nonce_name]) ||
         !wp_verify_nonce(
@@ -106,18 +110,33 @@ function mytheme_save_select_meta_field(
         return;
     }
 
+    // 投稿を保存できるか確認
     if (!mytheme_can_save_post($post_id, $post_type)) {
         return;
     }
 
-    $value = sanitize_text_field(
-        wp_unslash($_POST[$field_name] ?? '')
-    );
+    if (!isset($_POST[$field_name])) {
+        return;
+    }
 
-    if ($value === '') {
+    $value = absint($_POST[$field_name]);
+
+    // 未選択なら紐付けを削除
+    if ($value === 0) {
         delete_post_meta($post_id, $meta_key);
         return;
     }
 
+    // 紐付け先の投稿を確認
+    if ($value_type === 'post') {
+        if (
+            get_post_type($value) !== $related_type ||
+            !current_user_can('edit_post', $value)
+        ) {
+            return;
+        }
+    }
+
+    // 選択内容を保存
     update_post_meta($post_id, $meta_key, $value);
 }

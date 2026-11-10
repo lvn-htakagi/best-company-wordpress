@@ -110,7 +110,7 @@ function mytheme_render_shop_selector_field($post, $field_name) {
 function mytheme_render_selector_field($post, $field_name, $options) {
     $selected_value = get_post_meta(
         $post->ID,
-        '_' . $field_name,
+        '_' .$field_name,
         true
     );
 

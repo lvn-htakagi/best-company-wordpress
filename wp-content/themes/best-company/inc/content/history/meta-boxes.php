@@ -25,21 +25,21 @@ mytheme_add_shop_history_meta_box(
 
 // 沿革編集画面に「年」を追加
 mytheme_add_shop_history_meta_box(
-    'history_year',
+    'shop_history_year',
     '年',
     'mytheme_render_history_year_field'
 );
 
 // 沿革編集画面に「月」を追加
 mytheme_add_shop_history_meta_box(
-    'history_month',
+    'shop_history_month',
     '月',
     'mytheme_render_history_month_field'
 );
 
 // 沿革編集画面に「沿革」を追加
 mytheme_add_shop_history_meta_box(
-    'history_detail',
+    'shop_history_detail',
     '沿革',
     'mytheme_render_history_detail_field'
 );

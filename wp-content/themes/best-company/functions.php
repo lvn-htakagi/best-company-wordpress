@@ -7,6 +7,7 @@ require_once get_theme_file_path('/inc/content/shop/save.php');
 // 沿革関連のファイルを読み込む
 require_once get_theme_file_path('/inc/content/history/meta-boxes.php');
 require_once get_theme_file_path('/inc/content/history/fields.php');
+require_once get_theme_file_path('/inc/content/history/save.php');
 // インタビュー関連のファイルを読み込む
 require_once get_theme_file_path('/inc/content/interview/meta-boxes.php');
 require_once get_theme_file_path('/inc/content/interview/fields.php');
@@ -526,64 +527,6 @@ function mytheme_save_shop_gallery($post_id) {
 add_action('save_post_shop', 'mytheme_save_shop_gallery');
 
 /**
- * 沿革に紐付けるショップIDを保存
- */
-function mytheme_save_history_shop($post_id) {
-    // nonceの検証
-    if (
-        !isset($_POST['mytheme_history_shop_nonce']) ||
-        !wp_verify_nonce(
-            sanitize_text_field(
-                wp_unslash($_POST['mytheme_history_shop_nonce'])
-            ),
-            'mytheme_save_history_shop'
-        )
-    ) {
-        return;
-    }
-
-    // 自動保存を除外
-    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
-        return;
-    }
-
-    // 沿革の編集権限を確認
-    if (
-        get_post_type($post_id) !== 'shop_history' ||
-        !current_user_can('edit_post', $post_id)
-    ) {
-        return;
-    }
-
-    if (!isset($_POST['history_shop_id'])) {
-        return;
-    }
-
-    $shop_id = absint($_POST['history_shop_id']);
-
-    // 選択解除なら紐付けを削除
-    if ($shop_id === 0) {
-        delete_post_meta($post_id, '_shop_history_shop_id');
-        return;
-    }
-
-    // 実在するショップか確認
-    if (
-        get_post_type($shop_id) !== 'shop' ||
-        !current_user_can('edit_post', $shop_id)
-    ) {
-        return;
-    }
-
-    update_post_meta(
-        $post_id,
-        '_shop_history_shop_id',
-        $shop_id
-    );
-}
-add_action('save_post_shop_history', 'mytheme_save_history_shop');
-
-/**
  * 年を保存
  */
 function mytheme_save_history_year($post_id) {
@@ -662,11 +605,11 @@ function mytheme_save_history_month($post_id) {
         return;
     }
 
-    if (!isset($_POST['history_month'])) {
+    if (!isset($_POST['shop_history_month'])) {
         return;
     }
 
-    $history_month = absint($_POST['history_month']);
+    $history_month = absint($_POST['shop_history_month']);
 
     if (
         $history_month !== 0 &&
