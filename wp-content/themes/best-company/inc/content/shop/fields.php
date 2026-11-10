@@ -548,6 +548,25 @@ function mytheme_render_shop_organizations_field($post) {
 }
 
 /**
+ * 従業員数(企業概要)の入力欄を表示
+ * 
+ * @param WP_Post $post 投稿オブジェクト
+ */
+function mytheme_render_shop_employee_field($post) {
+    mytheme_render_shop_nonce(
+        'mytheme_save_shop_employee',
+        'mytheme_shop_employee_nonce'
+    );
+
+    mytheme_render_shop_text_field(
+        $post,
+        'shop_employee',
+        '従業員数(企業概要)'
+    );
+}
+add_action('save_post_shop', 'mytheme_save_shop_employee');
+
+/**
  * 設立年月(企業概要)の入力欄を表示
  * 
  * @param WP_Post $post 投稿オブジェクト
