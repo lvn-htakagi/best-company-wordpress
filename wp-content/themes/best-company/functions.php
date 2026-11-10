@@ -640,7 +640,7 @@ function mytheme_save_history_detail($post_id) {
         return;
     }
 
-    $detail = sanitize_textarea_field(wp_unslash($_POST['history_detail']));
+    $detail = sanitize_textarea_field(wp_unslash($_POST['shop_history_detail']));
 
     if ($detail === '') {
         delete_post_meta($post_id, '_shop_history_detail');
