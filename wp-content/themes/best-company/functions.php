@@ -1,9 +1,16 @@
 <?php
 require_once get_theme_file_path('/inc/save-field.php');
+// ショップ関連のファイルを読み込む
 require_once get_theme_file_path('/inc/content/shop/meta-boxes.php');
 require_once get_theme_file_path('/inc/content/shop/fields.php');
 require_once get_theme_file_path('/inc/content/shop/save.php');
+// 沿革関連のファイルを読み込む
 require_once get_theme_file_path('/inc/content/history/meta-boxes.php');
+require_once get_theme_file_path('/inc/content/history/fields.php');
+// インタビュー関連のファイルを読み込む
+require_once get_theme_file_path('/inc/content/interview/meta-boxes.php');
+require_once get_theme_file_path('/inc/content/interview/fields.php');
+
 
 define('LVN_MATCH_URL', 'https://dev-best-wp.lvnmatch.com');
 define('BEST_COMPANY_URL', LVN_MATCH_URL . '/shops/');
@@ -702,25 +709,6 @@ function mytheme_save_history_detail($post_id) {
 add_action('save_post_shop_history', 'mytheme_save_history_detail');
 
 /**
- * インタビュー編集画面に「ショップ」を追加
- */
-mytheme_add_shop_interview_meta_box(
-    'shop_interview_shop',
-    'ショップ',
-    'mytheme_render_interview_shop_field'
-);
-
-
-/**
- * ショップ選択欄を表示
- */
-function mytheme_render_interview_shop_field($post) {
-    wp_nonce_field('mytheme_save_interview_shop', 'mytheme_interview_shop_nonce');
-
-    mytheme_render_shop_selector_field($post, 'interview');
-}
-
-/**
  * 沿革に紐付けるショップIDを保存
  */
 function mytheme_save_interview_shop($post_id) {
@@ -779,33 +767,6 @@ function mytheme_save_interview_shop($post_id) {
 add_action('save_post_shop_interview', 'mytheme_save_interview_shop');
 
 /**
- * インタビュー編集画面に「質問」を追加
- */
-mytheme_add_shop_interview_meta_box(
-    'interview_question',
-    '質問',
-    'mytheme_render_interview_question_field'
-);
-
-/**
- * インタビューの質問の入力欄を表示
- */
-function mytheme_render_interview_question_field($post) {
-    $question = get_post_meta($post->ID, '_shop_interview_question', true);
-
-    wp_nonce_field('mytheme_save_interview_question', 'mytheme_interview_question_nonce');
-    ?>
-    <input
-        type="text"
-        id="interview_question"
-        name="interview_question"
-        style="width: 100%;"
-        value="<?php echo esc_attr($question); ?>"
-    />
-    <?php
-}
-
-/**
  * インタビューの質問を保存
  */
 function mytheme_save_interview_question($post_id) {
@@ -829,32 +790,6 @@ function mytheme_save_interview_question($post_id) {
     update_post_meta($post_id, '_shop_interview_question', $question);
 }
 add_action('save_post_shop_interview', 'mytheme_save_interview_question');
-
-/**
- * インタビュー編集画面に「回答」を追加
- */
-mytheme_add_shop_interview_meta_box(
-    'interview_answer',
-    '回答',
-    'mytheme_render_interview_answer_field'
-);
-
-/**
- * インタビューの回答の入力欄を表示
- */
-function mytheme_render_interview_answer_field($post) {
-    $answer = get_post_meta($post->ID, '_shop_interview_answer', true);
-
-    wp_nonce_field('mytheme_save_interview_answer', 'mytheme_interview_answer_nonce');
-    ?>
-    <label for="interview_answer">回答</label>
-    <textarea
-        id="interview_answer"
-        name="interview_answer"
-        style="width: 100%;"
-    ><?php echo esc_textarea($answer); ?></textarea>
-    <?php
-}
 
 /**
  * インタビューの回答を保存

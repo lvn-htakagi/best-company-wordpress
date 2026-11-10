@@ -52,7 +52,7 @@ function mytheme_render_history_year_field($post) {
         'mytheme_history_year_nonce'
     );
 
-    mytheme_render_selector_field($post, 'history_year', mytheme_get_history_years());
+    mytheme_render_selector_field($post, 'shop_history_year', mytheme_get_history_years());
 }
 
 /**
@@ -77,7 +77,7 @@ function mytheme_render_history_month_field($post) {
         'mytheme_history_month_nonce'
     );
 
-    mytheme_render_selector_field($post, 'history_month', mytheme_get_history_months());
+    mytheme_render_selector_field($post, 'shop_history_month', mytheme_get_history_months());
 }
 
 /**
@@ -93,7 +93,7 @@ function mytheme_render_history_detail_field($post) {
 
     mytheme_render_text_field(
         $post,
-        'history_detail',
+        'shop_history_detail',
         '沿革'
     );
 }
