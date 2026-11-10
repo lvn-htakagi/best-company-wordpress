@@ -180,17 +180,7 @@ function mytheme_render_shop_prefecture_field($post) {
 
     $prefecture = get_post_meta($post->ID, '_shop_prefecture', true);
 
-    echo '<select id="shop_prefecture" name="shop_prefecture">';
-    echo '<option value="">選択してください</option>';
-
-    foreach (mytheme_get_prefectures() as $key => $name) {
-        echo '<option value="' . esc_attr($key) . '"'
-            . selected($prefecture, $key, false) . '>';
-        echo esc_html($name);
-        echo '</option>';
-    }
-
-    echo '</select>';
+    mytheme_render_selector_field($post, 'shop_prefecture', mytheme_get_prefectures());
 }
 
 /**

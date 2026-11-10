@@ -519,18 +519,6 @@ function mytheme_save_shop_gallery($post_id) {
 add_action('save_post_shop', 'mytheme_save_shop_gallery');
 
 /**
- * ショップ選択欄を表示
- */
-function mytheme_render_history_shop_field($post) {
-    wp_nonce_field(
-        'mytheme_save_history_shop',
-        'mytheme_history_shop_nonce'
-    );
-
-    mytheme_render_shop_selector_field($post, 'history');
-}
-
-/**
  * 沿革に紐付けるショップIDを保存
  */
 function mytheme_save_history_shop($post_id) {
@@ -589,41 +577,6 @@ function mytheme_save_history_shop($post_id) {
 add_action('save_post_shop_history', 'mytheme_save_history_shop');
 
 /**
- * 年の選択肢
- */
-function mytheme_get_history_years() {
-    $year = [];
-    for($i=1900;$i<=2036;$i++){
-        $year[$i] = $i . "年";
-    }
-    return $year;
-}
-
-/**
- * 年の入力欄を表示
- */
-function mytheme_render_history_year_field($post) {
-    $history_year = get_post_meta($post->ID, '_shop_history_year', true);
-
-    wp_nonce_field(
-        'mytheme_save_history_year',
-        'mytheme_history_year_nonce'
-    );
-
-    echo '<select id="history_year" name="history_year">';
-    echo '<option value="">選択してください</option>';
-
-    foreach (mytheme_get_history_years() as $key => $name) {
-        echo '<option value="' . esc_attr($key) . '"'
-            . selected((string) $history_year, (string) $key, false) . '>';
-        echo esc_html($name);
-        echo '</option>';
-    }
-
-    echo '</select>';
-}
-
-/**
  * 年を保存
  */
 function mytheme_save_history_year($post_id) {
@@ -674,50 +627,6 @@ function mytheme_save_history_year($post_id) {
 add_action('save_post_shop_history', 'mytheme_save_history_year');
 
 /**
- * 月の選択肢
- */
-function mytheme_get_history_months() {
-    return [
-        1 => '1月',
-        2 => '2月',
-        3 => '3月',
-        4 => '4月',
-        5 => '5月',
-        6 => '6月',
-        7 => '7月',
-        8 => '8月',
-        9 => '9月',
-        10 => '10月',
-        11 => '11月',
-        12 => '12月',
-    ];
-}
-
-/**
- * 月の入力欄を表示
- */
-function mytheme_render_history_month_field($post) {
-    $history_month = get_post_meta($post->ID, '_shop_history_month', true);
-
-    wp_nonce_field(
-        'mytheme_save_history_month',
-        'mytheme_history_month_nonce'
-    );
-
-    echo '<select id="history_month" name="history_month">';
-    echo '<option value="">選択してください</option>';
-
-    foreach (mytheme_get_history_months() as $key => $name) {
-        echo '<option value="' . esc_attr($key) . '"'
-            . selected((string) $history_month, (string) $key, false) . '>';
-        echo esc_html($name);
-        echo '</option>';
-    }
-
-    echo '</select>';
-}
-
-/**
  * 月を保存
  */
 function mytheme_save_history_month($post_id) {
@@ -766,24 +675,6 @@ function mytheme_save_history_month($post_id) {
     }
 }
 add_action('save_post_shop_history', 'mytheme_save_history_month');
-
-/**
- * 沿革の入力欄を表示
- */
-function mytheme_render_history_detail_field($post) {
-    $detail = get_post_meta($post->ID, '_shop_history_detail', true);
-
-    wp_nonce_field('mytheme_save_history_detail', 'mytheme_history_detail_nonce');
-    ?>
-    <input
-        type="text"
-        id="history_detail"
-        name="history_detail"
-        style="width: 100%;"
-        value="<?php echo esc_attr($detail); ?>"
-    />
-    <?php
-}
 
 /**
  * 沿革を保存

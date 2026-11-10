@@ -99,3 +99,35 @@ function mytheme_render_shop_selector_field($post, $field_name) {
 
     echo '</select>';
 }
+
+/**
+ * 汎用のセレクトボックス入力欄を表示
+ *
+ * @param WP_Post $post 投稿オブジェクト
+ * @param string $field_name フィールド名
+ * @param array $options 選択肢の配列（キーが値、値がラベル）
+ */
+function mytheme_render_selector_field($post, $field_name, $options) {
+    $selected_value = get_post_meta(
+        $post->ID,
+        '_' . $field_name,
+        true
+    );
+
+    echo '<select name="' . esc_attr($field_name) . '" id="' . esc_attr($field_name) . '">';
+    echo '<option value="">選択してください</option>';
+
+    foreach ($options as $key => $label) {
+        echo '<option value="' . esc_attr($key) . '"'
+            . selected(
+                (string) $selected_value,
+                (string) $key,
+                false
+            )
+            . '>';
+        echo esc_html($label);
+        echo '</option>';
+    }
+
+    echo '</select>';
+}
