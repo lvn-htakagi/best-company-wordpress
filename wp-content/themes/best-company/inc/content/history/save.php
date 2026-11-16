@@ -35,3 +35,21 @@ function mytheme_save_history_shop($post_id) {
     );
 }
 add_action('save_post_shop_history', 'mytheme_save_history_shop');
+
+/**
+ * 沿革を保存
+ * 
+ * @param int $post_id 保存対象の投稿ID
+ * @return void
+ */
+function mytheme_save_history_detail($post_id) {
+    mytheme_save_text_meta_field(
+        $post_id,
+        'mytheme_history_detail_nonce',
+        'mytheme_save_history_detail',
+        'shop_history_detail',
+        '_shop_history_detail',
+        'shop_history'
+    );
+}
+add_action('save_post_shop_history', 'mytheme_save_history_detail');

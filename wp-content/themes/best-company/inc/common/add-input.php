@@ -81,6 +81,12 @@ function mytheme_render_shop_selector_field($post, $field_name) {
             true
         );
 
+        $shop_year = get_post_meta(
+            $shop->ID,
+            '_shop_year',
+            true
+        );
+
         // ショップ名が未入力の場合の表示
         if ($shop_name === '') {
             $shop_name = 'ショップID: ' . $shop->ID;
@@ -93,7 +99,7 @@ function mytheme_render_shop_selector_field($post, $field_name) {
                 false
             )
             . '>';
-        echo esc_html($shop_name);
+        echo esc_html($shop_name . ' (' . $shop_year . ')');
         echo '</option>';
     }
 

@@ -24,14 +24,14 @@ mytheme_add_shop_interview_meta_box(
 
 // インタビュー編集画面に「質問」を追加
 mytheme_add_shop_interview_meta_box(
-    'interview_question',
+    'shop_interview_question',
     '質問',
     'mytheme_render_interview_question_field'
 );
 
 // インタビュー編集画面に「回答」を追加
 mytheme_add_shop_interview_meta_box(
-    'interview_answer',
+    'shop_interview_answer',
     '回答',
     'mytheme_render_interview_answer_field'
 );
