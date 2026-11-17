@@ -9,7 +9,6 @@ if (have_posts()) :
 
         // 基本情報
         $shop_name    = get_post_meta($shop_id, '_shop_name', true);
-        $company_name = get_post_meta($shop_id, '_shop_company_name', true) ?: $shop_name;
         $shop_year    = get_post_meta($shop_id, '_shop_year', true);
         $comment      = get_post_meta($shop_id, '_shop_comment', true);
         $introduction = get_post_meta($shop_id, '_shop_introduction', true);
@@ -105,7 +104,7 @@ if (have_posts()) :
 
         // URL
         $base_title = 'ベスト不動産カンパニー' . date('Y');
-        $title = $company_name . 'の企業情報 | ' . $base_title;
+        $title = $shop_name . 'の企業情報 | ' . $base_title;
 
         $back_url = $shop_year !== ''
             ? home_url('/shops/' . rawurlencode((string) $shop_year) . '/')
@@ -142,7 +141,7 @@ if (have_posts()) :
                                     $logo_id,
                                     'medium',
                                     false,
-                                    ['alt' => $company_name]
+                                    ['alt' => $shop_name]
                                 );
                             } else {
                                 $image_id = (int) get_post_meta($shop_id, '_shop_image', true);
@@ -152,7 +151,7 @@ if (have_posts()) :
                                         $image_id,
                                         'medium',
                                         false,
-                                        ['alt' => $company_name]
+                                        ['alt' => $shop_name]
                                     );
                                 }
                             }
@@ -208,7 +207,7 @@ if (have_posts()) :
                     <p>企業概要</p>
                     <dl>
                         <dt>会社名</dt>
-                        <dd><?php echo esc_html($company_name); ?></dd>
+                        <dd><?php echo esc_html($shop_name); ?></dd>
 
                         <dt>所在地</dt>
                         <dd><?php echo esc_html($company_fields['address']); ?></dd>
@@ -346,7 +345,7 @@ if (have_posts()) :
             <div id="breadcrumbBottom" class="sp">
                 <a href="<?php echo esc_url(home_url('/')); ?>">ベスト不動産カンパニー</a>
                 &nbsp;&gt;&nbsp;
-                <?php echo esc_html($company_name); ?>
+                <?php echo esc_html($shop_name); ?>
             </div>
 
         <?php

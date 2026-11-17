@@ -18,7 +18,6 @@
  * - フォトギャラリー
  *
  * 会社概要
- *   - 会社名
  *   - 所在地
  *   - 電話番号
  *   - FAX番号
@@ -354,22 +353,6 @@ function mytheme_render_shop_gallery_field($post) {
     </style>
 
     <?php
-}
-
-/**
- * 会社名の入力欄を表示
- */
-function mytheme_render_shop_company_name_field($post) {
-    wp_nonce_field(
-        'mytheme_save_shop_company_name',
-        'mytheme_shop_company_name_nonce'
-    );
-
-    mytheme_render_text_field(
-        $post,
-        'shop_company_name',
-        '会社名'
-    );
 }
 
 /**

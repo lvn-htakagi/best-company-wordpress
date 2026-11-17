@@ -12,9 +12,10 @@ require_once get_theme_file_path('/inc/content/history/save.php');
 require_once get_theme_file_path('/inc/content/interview/meta-boxes.php');
 require_once get_theme_file_path('/inc/content/interview/fields.php');
 
-
 define('LVN_MATCH_URL', 'https://dev-best-wp.lvnmatch.com');
 define('BEST_COMPANY_URL', LVN_MATCH_URL . '/shops/');
+
+global $wpdb;
 
 function mytheme_remove_comments_menu() {
     remove_menu_page('edit-comments.php');
@@ -35,6 +36,20 @@ function mytheme_remove_themes_menu() {
     remove_menu_page('themes.php');
 }
 add_action('admin_menu', 'mytheme_remove_themes_menu');
+
+function mytheme_remove_shop_date_column($columns) {
+    unset($columns['date']);
+
+    $checkbox = $columns['cb'] ?? null;
+    unset($columns['cb']);
+
+    if ($checkbox !== null) {
+        $columns = ['cb' => $checkbox] + $columns;
+    }
+
+    return $columns;
+}
+add_filter('manage_shop_posts_columns', 'mytheme_remove_shop_date_column');
 
 function mytheme_register_shop_post_type() {
     register_post_type('shop', [
@@ -555,11 +570,11 @@ function mytheme_save_history_year($post_id) {
         return;
     }
 
-    if (!isset($_POST['history_year'])) {
+    if (!isset($_POST['shop_history_year'])) {
         return;
     }
 
-    $history_year = absint($_POST['history_year']);
+    $history_year = absint($_POST['shop_history_year']);
 
     if (
         $history_year !== 0 &&
@@ -741,11 +756,17 @@ function mytheme_shop_admin_columns($columns) {
     $new_columns = [];
 
     // ショップ名を先頭にする
+    $new_columns['cb'] = $columns['cb'];
     $new_columns['shop_name'] = 'ショップ名';
+    $new_columns['shop_customer_id'] = 'カスタマーID';
+    $new_columns['shop_prefecture'] = '都道府県';
+    $new_columns['shop_year'] = '年';
+    $new_columns['shop_start_date'] = '掲載開始日';
+    $new_columns['shop_status'] = '掲載状況';
 
     // 既存の列を追加（タイトル列は除外）
     foreach ($columns as $key => $label) {
-        if ($key !== 'title') {
+        if (!in_array($key, ['cb', 'title', 'date'], true)) {
             $new_columns[$key] = $label;
         }
     }
@@ -758,13 +779,37 @@ add_filter('manage_shop_posts_columns', 'mytheme_shop_admin_columns');
  * ショップ一覧にショップ名を表示
  */
 function mytheme_shop_admin_column_content($column, $post_id) {
-    if ($column !== 'shop_name') {
-        return;
+    if ($column === 'shop_name') {
+        $shop_name = get_post_meta($post_id, '_shop_name', true);
+        echo esc_html($shop_name ?: '（ショップ名未入力）');
     }
+    if ($column === 'shop_customer_id') {
+        $shop_customer_id = get_post_meta($post_id, '_shop_custome_id', true);
+        echo esc_html($shop_customer_id ?: '（カスタマーID未入力）');
+    }
+    if ($column === 'shop_prefecture') {
+        $shop_prefecture = mytheme_get_prefectures()[get_post_meta($post_id, '_shop_prefecture', true)] ?? '';
+        echo esc_html($shop_prefecture ?: '（都道府県未入力）');
+    }
+    if ($column === 'shop_year') {
+        $shop_year = get_post_meta($post_id, '_shop_year', true);
+        echo esc_html($shop_year ?: '（年未入力）');
+    }
+    if ($column === 'shop_start_date') {
+        $post_date = get_the_date('Y/m/d', $post_id);
+        echo esc_html($post_date);
+    }
+    if ($column === 'shop_status') {
+        $status = get_post_status($post_id);
 
-    $shop_name = get_post_meta($post_id, '_shop_name', true);
-
-    echo esc_html($shop_name ?: '（ショップ名未入力）');
+        $status_labels = [
+            'publish' => '公開',
+            'private' => '非公開',
+            'draft'   => '下書き',
+            'pending' => '承認待ち',
+        ];
+        echo esc_html($status_labels[$status] ?? '（掲載状況未入力）');
+    }
 }
 add_action('manage_shop_posts_custom_column', 'mytheme_shop_admin_column_content', 10, 2);
 
@@ -773,6 +818,10 @@ add_action('manage_shop_posts_custom_column', 'mytheme_shop_admin_column_content
  */
 function mytheme_shop_sortable_columns($columns) {
     $columns['shop_name'] = 'shop_name';
+    $columns['shop_customer_id'] = 'shop_customer_id';
+    $columns['shop_prefecture'] = 'shop_prefecture';
+    $columns['shop_year'] = 'shop_year';
+    $columns['shop_start_date'] = 'shop_start_date';
     return $columns;
 }
 add_filter('manage_edit-shop_sortable_columns', 'mytheme_shop_sortable_columns');
@@ -792,6 +841,41 @@ function mytheme_shop_orderby($query) {
     if ($query->get('orderby') === 'shop_name') {
         $query->set('meta_key', '_shop_name');
         $query->set('orderby', 'meta_value');
+    }
+
+    if ($query->get('orderby') === 'shop_customer_id') {
+        $query->set('meta_key', '_shop_custome_id');
+        $query->set('orderby', 'meta_value');
+    }
+
+    if ($query->get('orderby') === 'shop_prefecture') {
+        global $wpdb;
+        $prefectures = mytheme_get_prefectures();
+
+        // 都道府県IDを県名に変換するCASE式を作成
+        $case_sql = 'CASE';
+
+        foreach ($prefectures as $id => $name) {
+            $case_sql .= $wpdb->prepare(
+                ' WHEN meta_value = %s THEN %s',
+                (string) $id,
+                $name
+            );
+        }
+
+        $case_sql .= ' ELSE "" END';
+
+        $query->set('meta_key', '_shop_prefecture');
+        $query->set('orderby', 'meta_value');
+    }
+
+    if ($query->get('orderby') === 'shop_year') {
+        $query->set('meta_key', '_shop_year');
+        $query->set('orderby', 'meta_value');
+    }
+
+    if ($query->get('orderby') === 'shop_start_date') {
+        $query->set('orderby', 'date');
     }
 }
 add_action('pre_get_posts', 'mytheme_shop_orderby');

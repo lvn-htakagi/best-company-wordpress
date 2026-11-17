@@ -50,7 +50,7 @@ mytheme_add_shop_meta_box(
 // 名前
 mytheme_add_shop_meta_box(
     'shop_name',
-    '名前',
+    '会社名',
     'mytheme_render_shop_name_field'
 );
 
@@ -117,13 +117,6 @@ mytheme_add_shop_meta_box(
     'shop_gallery',
     'フォトギャラリー',
     'mytheme_render_shop_gallery_field'
-);
-
-// 会社名
-mytheme_add_shop_meta_box(
-    'shop_company_name',
-    '会社名',
-    'mytheme_render_shop_company_name_field'
 );
 
 // 所在地
