@@ -271,7 +271,7 @@ if (have_posts()) :
                             ?>
                             <dt>
                                 <?php
-                                echo esc_html($history_year);
+                                echo esc_html($history_year) . '年';
                                 if ($history_month !== '') {
                                     echo esc_html($history_month) . '月';
                                 }

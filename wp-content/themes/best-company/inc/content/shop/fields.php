@@ -7,14 +7,14 @@
  * 登録する項目
  * - 名前
  * - 代表者名
- * - 経歴
+ * - 略歴
  * - 顔写真
  * - 画像
  * - 都道府県
  * - 年
  * - 編集部コメント
  * - 企業紹介
- * - カスタムID
+ * - カスタマーID
  * - フォトギャラリー
  *
  * 会社概要
@@ -77,7 +77,7 @@ function mytheme_render_shop_president_field($post) {
 }
 
 /**
- * 経歴入力欄を表示
+ * 略歴入力欄を表示
  *
  * @param WP_Post $post 投稿オブジェクト
  */
@@ -90,7 +90,7 @@ function mytheme_render_shop_career_field($post) {
     mytheme_render_textarea_field(
         $post,
         'shop_career',
-        '経歴'
+        '略歴'
     );
 }
 
@@ -244,7 +244,7 @@ function mytheme_render_shop_introduction_field($post) {
 }
 
 /**
- * カスタムIDの入力欄を表示
+ * カスタマーIDの入力欄を表示
  * 
  * @param WP_Post $post 投稿オブジェクト
  */
@@ -257,7 +257,7 @@ function mytheme_render_shop_custome_id_field($post) {
     mytheme_render_text_field(
         $post,
         'shop_custome_id',
-        'カスタムID'
+        'カスタマーID'
     );
 }
 

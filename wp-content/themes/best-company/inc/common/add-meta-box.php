@@ -5,17 +5,18 @@
  * @param string $id メタボックスのID
  * @param string $title メタボックスのタイトル
  * @param callable $callback コールバック関数
+ * @param string $priority メタボックスの優先度
  * 
  */
-function mytheme_add_shop_meta_box($id, $title, $callback) {
-    add_action('add_meta_boxes', function () use ($id, $title, $callback) {
+function mytheme_add_shop_meta_box($id, $title, $callback, $priority = 'default') {
+    add_action('add_meta_boxes', function () use ($id, $title, $callback, $priority) {
         add_meta_box(
             $id,
             $title,
             $callback,
             'shop',
             'normal',
-            'default'
+            $priority
         );
     });
 }

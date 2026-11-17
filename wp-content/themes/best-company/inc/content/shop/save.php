@@ -7,14 +7,14 @@
  * 登録する項目
  * - 名前
  * - 代表者名
- * - 経歴
+ * - 略歴
  * - 顔写真
  * - 画像
  * - 都道府県
  * - 年
  * - 編集部コメント
  * - 企業紹介
- * - カスタムID
+ * - カスタマーID
  * - フォトギャラリー
  *
  * 会社概要
@@ -74,7 +74,7 @@ function mytheme_save_shop_president($post_id) {
 add_action('save_post_shop', 'mytheme_save_shop_president');
 
 /**
- * 経歴を保存
+ * 略歴を保存
  * 
  * @param int $post_id 投稿ID
  */
@@ -125,7 +125,7 @@ function mytheme_save_shop_introduction($post_id) {
 add_action('save_post_shop', 'mytheme_save_shop_introduction');
 
 /**
- * カスタムIDを保存
+ * カスタマーIDを保存
  * 
  * @param int $post_id 投稿ID
  */

@@ -7,14 +7,14 @@
  * 登録する項目
  * - 名前
  * - 代表者名
- * - 経歴
+ * - 略歴
  * - 顔写真
  * - 画像
  * - 都道府県
  * - 年
  * - 編集部コメント
  * - 企業紹介
- * - カスタムID
+ * - カスタマーID
  * - フォトギャラリー
  *
  * 会社概要
@@ -39,6 +39,14 @@
 
 require_once get_theme_file_path('/inc/common/add-meta-box.php');
 
+// カスタマーID
+mytheme_add_shop_meta_box(
+    'shop_custome_id',
+    'カスタマーID',
+    'mytheme_render_shop_custome_id_field',
+    'high'
+);
+
 // 名前
 mytheme_add_shop_meta_box(
     'shop_name',
@@ -53,10 +61,10 @@ mytheme_add_shop_meta_box(
     'mytheme_render_shop_president_field'
 );
 
-// 経歴
+// 略歴
 mytheme_add_shop_meta_box(
     'shop_career',
-    '経歴',
+    '略歴',
     'mytheme_render_shop_career_field'
 );
 
@@ -78,14 +86,16 @@ mytheme_add_shop_meta_box(
 mytheme_add_shop_meta_box(
     'shop_prefecture',
     '都道府県',
-    'mytheme_render_shop_prefecture_field'
+    'mytheme_render_shop_prefecture_field',
+    'high'
 );
 
 // 年
 mytheme_add_shop_meta_box(
     'shop_year',
     '年',
-    'mytheme_render_shop_year_field'
+    'mytheme_render_shop_year_field',
+    'high'
 );
 
 // 編集部コメント
@@ -100,13 +110,6 @@ mytheme_add_shop_meta_box(
     'shop_introduction',
     '企業紹介',
     'mytheme_render_shop_introduction_field'
-);
-
-// カスタムID
-mytheme_add_shop_meta_box(
-    'shop_custome_id',
-    'カスタムID',
-    'mytheme_render_shop_custome_id_field'
 );
 
 // フォトギャラリー
