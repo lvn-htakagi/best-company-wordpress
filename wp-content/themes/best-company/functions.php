@@ -132,6 +132,74 @@ function mytheme_remove_shop_interview_editor_support() {
 }
 add_action('init', 'mytheme_remove_shop_interview_editor_support', 20);
 
+function mytheme_hide_shop_status_field() {
+
+    if (!current_user_can('manage_options')) {
+        echo '<style>
+            /* 公開ステータス */
+            #misc-publishing-actions .misc-pub-post-status,
+            #post-status-select {
+
+                display: none !important;
+            }
+
+            /* 公開範囲 */
+            #visibility {
+
+                display: none !important;
+            }
+
+            /* 投稿日時 */
+            .misc-pub-curtime,
+            #timestampdiv {
+
+                display: none !important;
+            }
+
+            /* ゴミ箱へ移動 */
+            #delete-action {
+
+                display: none !important;
+            }
+        </style>';
+
+        echo '<style>
+            #publishing-action {
+                display: none !important;
+            }
+        </style>';
+    }
+}
+add_action('admin_head-post.php', 'mytheme_hide_shop_status_field');
+add_action('admin_head-post-new.php', 'mytheme_hide_shop_status_field');
+
+function mytheme_restrict_shop_status($data, $postarr) {
+
+    if ($data['post_type'] !== 'shop') {
+        return $data;
+    }
+
+    // 管理者は制限しない
+    if (current_user_can('manage_options')) {
+        return $data;
+    }
+
+    // 既存ショップの場合は現在の公開状態を維持
+    if (!empty($postarr['ID'])) {
+        $post = get_post($postarr['ID']);
+
+        if ($post) {
+            $data['post_status'] = $post->post_status;
+        }
+    } else {
+        // 新規登録は下書き
+        $data['post_status'] = 'draft';
+    }
+
+    return $data;
+}
+add_filter('wp_insert_post_data', 'mytheme_restrict_shop_status', 10, 2);
+
 /**
  * ショップ一覧に複製リンクを追加
  * 

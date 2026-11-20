@@ -289,7 +289,8 @@ if (have_posts()) :
                             <?php foreach ($images as $image) : ?>
                                 <?php
                                 $gallery_image_id = (int) $image;
-                                $caption = get_post_meta($gallery_image_id, '_wp_attachment_image_alt', true);
+                                $alt = get_post_meta($gallery_image_id, '_wp_attachment_image_alt', true);
+                                $caption = wp_get_attachment_caption($gallery_image_id);
                                 ?>
                                 <?php if ($gallery_image_id) : ?>
                                     <li>
@@ -298,7 +299,7 @@ if (have_posts()) :
                                             $gallery_image_id,
                                             'large',
                                             false,
-                                            ['alt' => $caption]
+                                            ['alt' => $alt]
                                         );
                                         ?>
                                         <span class="photoDdesc"><?php echo esc_html($caption); ?></span>
