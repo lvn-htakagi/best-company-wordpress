@@ -4,10 +4,6 @@ require_once get_theme_file_path('/inc/save-field.php');
 require_once get_theme_file_path('/inc/content/shop/meta-boxes.php');
 require_once get_theme_file_path('/inc/content/shop/fields.php');
 require_once get_theme_file_path('/inc/content/shop/save.php');
-// 沿革関連のファイルを読み込む
-require_once get_theme_file_path('/inc/content/history/meta-boxes.php');
-require_once get_theme_file_path('/inc/content/history/fields.php');
-require_once get_theme_file_path('/inc/content/history/save.php');
 
 define('LVN_MATCH_URL', 'https://dev-best-wp.lvnmatch.com');
 define('BEST_COMPANY_URL', LVN_MATCH_URL . '/shops/');
@@ -68,39 +64,12 @@ function mytheme_register_shop_post_type() {
 }
 add_action('init', 'mytheme_register_shop_post_type');
 
-/**
- * 沿革のカスタム投稿タイプを登録
- */
-function mytheme_register_shop_history_post_type() {
-    register_post_type('shop_history', [
-        'labels' => [
-            'name'          => '沿革',
-            'singular_name' => '沿革',
-            'add_new_item'  => '沿革を追加',
-            'edit_item'     => '沿革を編集',
-        ],
-        'public'       => false,
-        'show_ui'      => true,
-        'show_in_rest' => false,
-        'menu_icon'    => 'dashicons-backup',
-        'supports'     => [],
-    ]);
-}
-add_action('init', 'mytheme_register_shop_history_post_type');
-
 function mytheme_remove_shop_editor_support() {
     remove_post_type_support('shop', 'title');
     remove_post_type_support('shop', 'editor');
     remove_post_type_support('shop', 'thumbnail');
 }
 add_action('init', 'mytheme_remove_shop_editor_support', 20);
-
-function mytheme_remove_shop_history_editor_support() {
-    remove_post_type_support('shop_history', 'title');
-    remove_post_type_support('shop_history', 'editor');
-    remove_post_type_support('shop_history', 'thumbnail');
-}
-add_action('init', 'mytheme_remove_shop_history_editor_support', 20);
 
 function mytheme_hide_shop_status_field() {
 
@@ -680,64 +649,6 @@ function mytheme_save_history_month($post_id) {
 add_action('save_post_shop_history', 'mytheme_save_history_month');
 
 /**
- * 沿革に紐付けるショップIDを保存
- */
-function mytheme_save_interview_shop($post_id) {
-    // nonceの検証
-    if (
-        !isset($_POST['mytheme_interview_shop_nonce']) ||
-        !wp_verify_nonce(
-            sanitize_text_field(
-                wp_unslash($_POST['mytheme_interview_shop_nonce'])
-            ),
-            'mytheme_save_interview_shop'
-        )
-    ) {
-        return;
-    }
-
-    // 自動保存を除外
-    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
-        return;
-    }
-
-    // 沿革の編集権限を確認
-    if (
-        get_post_type($post_id) !== 'shop_interview' ||
-        !current_user_can('edit_post', $post_id)
-    ) {
-        return;
-    }
-
-    if (!isset($_POST['interview_shop_id'])) {
-        return;
-    }
-
-    $shop_id = absint($_POST['interview_shop_id']);
-
-    // 選択解除なら紐付けを削除
-    if ($shop_id === 0) {
-        delete_post_meta($post_id, '_shop_interview_shop_id');
-        return;
-    }
-
-    // 実在するショップか確認
-    if (
-        get_post_type($shop_id) !== 'shop' ||
-        !current_user_can('edit_post', $shop_id)
-    ) {
-        return;
-    }
-
-    update_post_meta(
-        $post_id,
-        '_shop_interview_shop_id',
-        $shop_id
-    );
-}
-add_action('save_post_shop_interview', 'mytheme_save_interview_shop');
-
-/**
  * インタビューの質問を保存
  */
 function mytheme_save_interview_question($post_id) {
@@ -919,130 +830,6 @@ function mytheme_shop_orderby($query) {
 add_action('pre_get_posts', 'mytheme_shop_orderby');
 
 /**
- * 沿革一覧の列を設定
- */
-function mytheme_history_admin_columns($columns) {
-    $new_columns = [];
-
-    // 沿革を先頭にする
-    $new_columns['history_detail'] = '沿革';
-
-    // 既存の列を追加（タイトル列は除外）
-    foreach ($columns as $key => $label) {
-        if ($key !== 'title') {
-            $new_columns[$key] = $label;
-        }
-    }
-
-    return $new_columns;
-}
-add_filter('manage_shop_history_posts_columns', 'mytheme_history_admin_columns');
-
-/**
- * 沿革一覧に沿革を表示
- */
-function mytheme_history_admin_column_content($column, $post_id) {
-    if ($column !== 'history_detail') {
-        return;
-    }
-
-    $history_detail = get_post_meta($post_id, '_shop_history_detail', true);
-
-    echo esc_html($history_detail ?: '（沿革未入力）');
-}
-add_action('manage_shop_history_posts_custom_column', 'mytheme_history_admin_column_content', 10, 2);
-
-/**
- * 沿革の並び替えを有効にする
- */
-function mytheme_shop_history_sortable_columns($columns) {
-    $columns['history_detail'] = 'history_detail';
-    return $columns;
-}
-add_filter('manage_edit-shop_history_sortable_columns', 'mytheme_shop_history_sortable_columns');
-
-/**
- * 沿革で並び替える
- */
-function mytheme_shop_history_orderby($query) {
-    if (!is_admin() || !$query->is_main_query()) {
-        return;
-    }
-
-    if ($query->get('post_type') !== 'shop_history') {
-        return;
-    }
-
-    if ($query->get('orderby') === 'history_detail') {
-        $query->set('meta_key', '_shop_history_detail');
-        $query->set('orderby', 'meta_value');
-    }
-}
-add_action('pre_get_posts', 'mytheme_shop_history_orderby');
-
-/**
- * インタビュ一覧の列を設定
- */
-function mytheme_interview_admin_columns($columns) {
-    $new_columns = [];
-
-    // インタビューを先頭にする
-    $new_columns['interview_question'] = '質問';
-
-    // 既存の列を追加（タイトル列は除外）
-    foreach ($columns as $key => $label) {
-        if ($key !== 'title') {
-            $new_columns[$key] = $label;
-        }
-    }
-
-    return $new_columns;
-}
-add_filter('manage_shop_interview_posts_columns', 'mytheme_interview_admin_columns');
-
-/**
- * インタビュー一覧にインタビューを表示
- */
-function mytheme_interview_admin_column_content($column, $post_id) {
-    if ($column !== 'interview_question') {
-        return;
-    }
-
-    $interview_question = get_post_meta($post_id, '_shop_interview_question', true);
-
-    echo esc_html($interview_question ?: '（インタビュー未入力）');
-}
-add_action('manage_shop_interview_posts_custom_column', 'mytheme_interview_admin_column_content', 10, 2);
-
-/**
- * インタビューの並び替えを有効にする
- */
-function mytheme_shop_interview_sortable_columns($columns) {
-    $columns['interview_question'] = 'interview_question';
-    return $columns;
-}
-add_filter('manage_edit-shop_interview_sortable_columns', 'mytheme_shop_interview_sortable_columns');
-
-/**
- * インタビューで並び替える
- */
-function mytheme_shop_interview_orderby($query) {
-    if (!is_admin() || !$query->is_main_query()) {
-        return;
-    }
-
-    if ($query->get('post_type') !== 'shop_interview') {
-        return;
-    }
-
-    if ($query->get('orderby') === 'interview_question') {
-        $query->set('meta_key', '_shop_interview_question');
-        $query->set('orderby', 'meta_value');
-    }
-}
-add_action('pre_get_posts', 'mytheme_shop_interview_orderby');
-
-/**
  * 年別ショップ一覧のURL
  * /shops/2026 → ショップ一覧（2026年）
  */
@@ -1144,22 +931,6 @@ function mytheme_add_shop_judge_rewrite_rule() {
     );
 }
 add_action('init', 'mytheme_add_shop_judge_rewrite_rule');
-
-function mytheme_add_google_tag_manager() {
-    ?>
-    <!-- Google Tag Manager -->
-    <script>
-    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-    'https://www.googletagmanager.com/gtm.js?id='+i+dl;
-    f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','GTM-WTRGTJP');
-    </script>
-    <!-- End Google Tag Manager -->
-    <?php
-}
-add_action('wp_head', 'mytheme_add_google_tag_manager', 1);
 
 /**
  * ショップ編集画面用JavaScriptを読み込む

@@ -210,6 +210,13 @@ mytheme_add_shop_meta_box(
     'mytheme_render_shop_relationship_field'
 );
 
+// 沿革
+mytheme_add_shop_meta_box(
+    'shop_histories',
+    '沿革',
+    'mytheme_render_shop_histories_field'
+);
+
 // インタビュー
 mytheme_add_shop_meta_box(
     'shop_interviews',
