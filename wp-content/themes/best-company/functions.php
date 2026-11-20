@@ -1185,6 +1185,13 @@ function mytheme_enqueue_shop_admin_scripts($hook_suffix) {
         wp_get_theme()->get('Version'),
         true
     );
+
+    wp_enqueue_script(
+        'mytheme-admin-shop-histories',
+        get_theme_file_uri('/js/admin-shop-histories.js'),
+        [],
+        wp_get_theme()->get('Version'),
+        true
+    );
 }
 add_action('admin_enqueue_scripts', 'mytheme_enqueue_shop_admin_scripts');
-
