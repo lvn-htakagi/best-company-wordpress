@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
             item.querySelector('input[type="hidden"]').name = `shop_histories[${index}][id]`;
             item.querySelector('select[name$="[year]"]').name = `shop_histories[${index}][year]`;
             item.querySelector('select[name$="[month]"]').name = `shop_histories[${index}][month]`;
-            item.querySelector('input[type="text"]').name = `shop_histories[${index}][detail]`;
+            item.querySelector('textarea').name = `shop_histories[${index}][detail]`;
         });
     }
 

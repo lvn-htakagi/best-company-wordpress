@@ -378,6 +378,179 @@ function mytheme_save_shop_relationship($post_id) {
 add_action('save_post_shop', 'mytheme_save_shop_relationship');
 
 /**
+ * 沿革を保存
+ *
+ * @param int $post_id ショップの投稿ID
+ */
+function mytheme_save_shop_histories($post_id) {
+
+    // nonceの確認
+    if (
+        !isset($_POST['mytheme_shop_histories_nonce']) ||
+        !wp_verify_nonce(
+            sanitize_text_field(wp_unslash($_POST['mytheme_shop_histories_nonce'])),
+            'mytheme_save_shop_histories'
+        )
+    ) {
+        return;
+    }
+
+    // 自動保存・リビジョンを除外
+    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+        return;
+    }
+
+    if (wp_is_post_revision($post_id)) {
+        return;
+    }
+
+    // ショップの編集権限を確認
+    if (
+        get_post_type($post_id) !== 'shop' ||
+        !current_user_can('edit_post', $post_id)
+    ) {
+        return;
+    }
+
+    // 沿革の入力データが存在するか確認
+    if (!isset($_POST['shop_histories']) || !is_array($_POST['shop_histories'])) {
+        return;
+    }
+
+    $histories = wp_unslash($_POST['shop_histories']);
+
+    // ショップの公開状態を取得
+    $shop_status = get_post_status($post_id);
+
+    if (!in_array($shop_status, ['publish', 'draft', 'pending', 'private'], true)) {
+        $shop_status = 'draft';
+    }
+
+    // 現在紐付いている沿革を取得
+    $existing_histories = get_posts([
+        'post_type'      => 'shop_history',
+        'post_status'    => 'any',
+        'posts_per_page' => -1,
+        'meta_key'       => '_shop_history_shop_id',
+        'meta_value'     => $post_id,
+        'fields'         => 'ids',
+    ]);
+
+    $saved_history_ids = [];
+    $order = 0;
+
+    // 沿革を保存
+    foreach ($histories as $history) {
+
+        if (!is_array($history)) {
+            continue;
+        }
+
+        $history_id = isset($history['id'])
+            ? absint($history['id'])
+            : 0;
+
+        $year = isset($history['year'])
+            ? sanitize_text_field($history['year'])
+            : '';
+
+        $month = isset($history['month'])
+            ? sanitize_textarea_field($history['month'])
+            : '';
+
+        $detail = isset($history['detail'])
+            ? sanitize_textarea_field($history['detail'])
+            : '';
+
+        // 新規投稿で質問・回答が両方空なら作成しない
+        if (!$history_id && $year === '' && $month === '') {
+            continue;
+        }
+
+        // 既存沿革の場合
+        if ($history_id) {
+
+            // このショップに紐付いている投稿か確認
+            if (
+                get_post_type($history_id) !== 'shop_history' ||
+                (int) get_post_meta($history_id, '_shop_history_shop_id', true) !== (int) $post_id
+            ) {
+                continue;
+            }
+
+            $saved_history_ids[] = $history_id;
+
+            $result = wp_update_post([
+                'ID'          => $history_id,
+                'post_status' => $shop_status,
+            ], true);
+
+            if (is_wp_error($result)) {
+                continue;
+            }
+
+        } else {
+
+            // 新規沿革を作成
+            $history_id = wp_insert_post([
+                'post_type'   => 'shop_history',
+                'post_status' => $shop_status,
+                'post_author' => get_current_user_id(),
+            ], true);
+
+            if (is_wp_error($history_id)) {
+                continue;
+            }
+
+            // ショップとの紐付けを保存
+            update_post_meta(
+                $history_id,
+                '_shop_history_shop_id',
+                $post_id
+            );
+
+            $saved_history_ids[] = $history_id;
+        }
+
+        // 年・月・詳細を保存
+        update_post_meta(
+            $history_id,
+            '_shop_history_year',
+            $year
+        );
+
+        update_post_meta(
+            $history_id,
+            '_shop_history_month',
+            $month
+        );
+        update_post_meta(
+            $history_id,
+            '_shop_history_detail',
+            $detail
+        );
+
+        // 表示順を保存
+        update_post_meta(
+            $history_id,
+            '_shop_history_order',
+            $order
+        );
+
+        $order++;
+    }
+
+    // 画面から削除された沿革をゴミ箱へ移動
+    foreach ($existing_histories as $existing_id) {
+
+        if (!in_array((int) $existing_id, $saved_history_ids, true)) {
+            wp_trash_post($existing_id);
+        }
+    }
+}
+add_action('save_post_shop', 'mytheme_save_shop_histories');
+
+/**
  * インタビューを保存
  *
  * @param int $post_id ショップの投稿ID

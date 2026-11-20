@@ -97,7 +97,7 @@ function mytheme_render_shop_histories_field($post) {
                                 name="shop_histories[<?php echo esc_attr($index); ?>][detail]"
                                 class="widefat"
                                 rows="5"
-                                placeholder="回答を入力してください"
+                                placeholder="沿革を入力してください"
                             ><?php echo esc_textarea($detail); ?></textarea>
                         </p>
                     </div>
