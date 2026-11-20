@@ -4,6 +4,8 @@ require_once get_theme_file_path('/inc/save-field.php');
 require_once get_theme_file_path('/inc/content/shop/meta-boxes.php');
 require_once get_theme_file_path('/inc/content/shop/fields.php');
 require_once get_theme_file_path('/inc/content/shop/save.php');
+require_once get_theme_file_path('/inc/content/shop/histories.php');
+require_once get_theme_file_path('/inc/content/shop/interviews.php');
 
 define('LVN_MATCH_URL', 'https://dev-best-wp.lvnmatch.com');
 define('BEST_COMPANY_URL', LVN_MATCH_URL . '/shops/');
@@ -422,43 +424,6 @@ function mytheme_save_shop_prefecture($post_id) {
 add_action('save_post_shop', 'mytheme_save_shop_prefecture');
 
 /**
- * 年を保存
- */
-function mytheme_save_shop_year($post_id) {
-    if (
-        !isset($_POST['mytheme_shop_year_nonce']) ||
-        !wp_verify_nonce(
-            sanitize_text_field(wp_unslash($_POST['mytheme_shop_year_nonce'])),
-            'mytheme_save_shop_year'
-        )
-    ) {
-        return;
-    }
-
-    if (!old_mytheme_can_save_shop($post_id)) {
-        return;
-    }
-
-    if (!isset($_POST['shop_year'])) {
-        return;
-    }
-
-    $year = sanitize_text_field(wp_unslash($_POST['shop_year']));
-
-    if ($year === '') {
-        delete_post_meta($post_id, '_shop_year');
-        return;
-    }
-
-    if (!preg_match('/^\d{4}$/', $year)) {
-        return;
-    }
-
-    update_post_meta($post_id, '_shop_year', $year);
-}
-add_action('save_post_shop', 'mytheme_save_shop_year');
-
-/**
  * ショップ編集画面でメディアライブラリを読み込む
  */
 function mytheme_shop_gallery_admin_scripts($hook) {
@@ -647,56 +612,6 @@ function mytheme_save_history_month($post_id) {
     }
 }
 add_action('save_post_shop_history', 'mytheme_save_history_month');
-
-/**
- * インタビューの質問を保存
- */
-function mytheme_save_interview_question($post_id) {
-    if (
-        !isset($_POST['mytheme_interview_question_nonce']) ||
-        !wp_verify_nonce(
-            sanitize_text_field(wp_unslash($_POST['mytheme_interview_question_nonce'])),
-            'mytheme_save_interview_question'
-        )
-    ) {
-        return;
-    }
-
-    $question = sanitize_textarea_field(wp_unslash($_POST['shop_interview_question']));
-
-    if ($question === '') {
-        delete_post_meta($post_id, '_shop_interview_question');
-        return;
-    }
-
-    update_post_meta($post_id, '_shop_interview_question', $question);
-}
-add_action('save_post_shop_interview', 'mytheme_save_interview_question');
-
-/**
- * インタビューの回答を保存
- */
-function mytheme_save_interview_answer($post_id) {
-    if (
-        !isset($_POST['mytheme_interview_answer_nonce']) ||
-        !wp_verify_nonce(
-            sanitize_text_field(wp_unslash($_POST['mytheme_interview_answer_nonce'])),
-            'mytheme_save_interview_answer'
-        )
-    ) {
-        return;
-    }
-
-    $answer = sanitize_textarea_field(wp_unslash($_POST['shop_interview_answer']));
-
-    if ($answer === '') {
-        delete_post_meta($post_id, '_shop_interview_answer');
-        return;
-    }
-
-    update_post_meta($post_id, '_shop_interview_answer', $answer);
-}
-add_action('save_post_shop_interview', 'mytheme_save_interview_answer');
 
 /**
  * ショップ一覧の列を設定
@@ -963,6 +878,13 @@ function mytheme_enqueue_shop_admin_scripts($hook_suffix) {
         [],
         wp_get_theme()->get('Version'),
         true
+    );
+
+    wp_enqueue_style(
+        'mytheme-admin-shop-fields',
+        get_theme_file_uri('/css/admin-shop-fields.css'),
+        [],
+        wp_get_theme()->get('Version')
     );
 }
 add_action('admin_enqueue_scripts', 'mytheme_enqueue_shop_admin_scripts');

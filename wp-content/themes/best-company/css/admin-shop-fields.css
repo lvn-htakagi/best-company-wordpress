@@ -1,0 +1,30 @@
+
+/* 沿革・インタビュー共通 */
+.mytheme-history-item,
+.mytheme-interview-item {
+    margin-bottom: 12px;
+    border: 1px solid #c3c4c7;
+    background: #fff;
+}
+
+.mytheme-history-header,
+.mytheme-interview-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px;
+    background: #f6f7f7;
+    border-bottom: 1px solid #c3c4c7;
+}
+
+.mytheme-history-content,
+.mytheme-interview-content {
+    padding: 12px;
+}
+
+#mytheme-shop-histories label,
+#mytheme-shop-interviews label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+}

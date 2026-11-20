@@ -57,6 +57,23 @@ function mytheme_save_shop_name($post_id) {
 add_action('save_post_shop', 'mytheme_save_shop_name');
 
 /**
+ * 年を保存
+ * 
+ * @param int $post_id 投稿ID
+ */
+function mytheme_save_shop_year($post_id) {
+    mytheme_save_select_field(
+        $post_id,
+        'mytheme_shop_year_nonce',
+        'mytheme_save_shop_year',
+        'shop_year',
+        '_shop_year',
+        'shop'
+    );
+}
+add_action('save_post_shop', 'mytheme_save_shop_year');
+
+/**
  * 代表者名を保存
  * 
  * @param int $post_id 投稿ID
