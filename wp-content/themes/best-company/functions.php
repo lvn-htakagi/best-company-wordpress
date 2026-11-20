@@ -383,47 +383,6 @@ function mytheme_save_shop_image($post_id) {
 add_action('save_post_shop', 'mytheme_save_shop_image');
 
 /**
- * 都道府県を保存
- */
-function mytheme_save_shop_prefecture($post_id) {
-    if (
-        !isset($_POST['mytheme_shop_prefecture_nonce']) ||
-        !wp_verify_nonce(
-            sanitize_text_field(
-                wp_unslash($_POST['mytheme_shop_prefecture_nonce'])
-            ),
-            'mytheme_save_shop_prefecture'
-        )
-    ) {
-        return;
-    }
-
-    if (!old_mytheme_can_save_shop($post_id)) {
-        return;
-    }
-
-    if (!isset($_POST['shop_prefecture']) || absint($_POST['shop_prefecture']) === 0) {
-        return;
-    }
-
-    $prefecture = absint($_POST['shop_prefecture']);
-
-    if (
-        $prefecture !== 0 &&
-        !array_key_exists($prefecture, mytheme_get_prefectures())
-    ) {
-        return;
-    }
-
-    if ($prefecture === 0) {
-        delete_post_meta($post_id, '_shop_prefecture');
-    } else {
-        update_post_meta($post_id, '_shop_prefecture', $prefecture);
-    }
-}
-add_action('save_post_shop', 'mytheme_save_shop_prefecture');
-
-/**
  * ショップ編集画面でメディアライブラリを読み込む
  */
 function mytheme_shop_gallery_admin_scripts($hook) {
