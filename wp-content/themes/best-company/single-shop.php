@@ -44,13 +44,20 @@ if (have_posts()) :
             'post_status'    => 'publish',
             'posts_per_page' => -1,
             'meta_query'     => [
-                [
+                'shop_id_clause' => [
                     'key'     => '_shop_interview_shop_id',
                     'value'   => $shop_id,
                     'compare' => '=',
+                ],
+                'order_clause' => [
+                    'key'     => '_shop_interview_order',
+                    'compare' => 'EXISTS',
                     'type'    => 'NUMERIC',
                 ],
-            ]
+            ],
+            'orderby' => [
+                'order_clause' => 'ASC',
+            ],
         ]);
 
         // 沿革：既存の shop_history CPT を利用

@@ -359,3 +359,167 @@ function mytheme_save_shop_relationship($post_id) {
     );
 }
 add_action('save_post_shop', 'mytheme_save_shop_relationship');
+
+/**
+ * インタビューを保存
+ *
+ * @param int $post_id ショップの投稿ID
+ */
+function mytheme_save_shop_interviews($post_id) {
+
+    // nonceの確認
+    if (
+        !isset($_POST['mytheme_shop_interviews_nonce']) ||
+        !wp_verify_nonce(
+            sanitize_text_field(wp_unslash($_POST['mytheme_shop_interviews_nonce'])),
+            'mytheme_save_shop_interviews'
+        )
+    ) {
+        return;
+    }
+
+    // 自動保存・リビジョンを除外
+    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+        return;
+    }
+
+    if (wp_is_post_revision($post_id)) {
+        return;
+    }
+
+    // ショップの編集権限を確認
+    if (
+        get_post_type($post_id) !== 'shop' ||
+        !current_user_can('edit_post', $post_id)
+    ) {
+        return;
+    }
+
+    // インタビューの入力データが存在するか確認
+    if (!isset($_POST['shop_interviews']) || !is_array($_POST['shop_interviews'])) {
+        return;
+    }
+
+    $interviews = wp_unslash($_POST['shop_interviews']);
+
+    // ショップの公開状態を取得
+    $shop_status = get_post_status($post_id);
+
+    if (!in_array($shop_status, ['publish', 'draft', 'pending', 'private'], true)) {
+        $shop_status = 'draft';
+    }
+
+    // 現在紐付いているインタビューを取得
+    $existing_interviews = get_posts([
+        'post_type'      => 'shop_interview',
+        'post_status'    => 'any',
+        'posts_per_page' => -1,
+        'meta_key'       => '_shop_interview_shop_id',
+        'meta_value'     => $post_id,
+        'fields'         => 'ids',
+    ]);
+
+    $saved_interview_ids = [];
+    $order = 0;
+
+    // インタビューを保存
+    foreach ($interviews as $interview) {
+
+        if (!is_array($interview)) {
+            continue;
+        }
+
+        $interview_id = isset($interview['id'])
+            ? absint($interview['id'])
+            : 0;
+
+        $question = isset($interview['question'])
+            ? sanitize_text_field($interview['question'])
+            : '';
+
+        $answer = isset($interview['answer'])
+            ? sanitize_textarea_field($interview['answer'])
+            : '';
+
+        // 新規投稿で質問・回答が両方空なら作成しない
+        if (!$interview_id && $question === '' && $answer === '') {
+            continue;
+        }
+
+        // 既存インタビューの場合
+        if ($interview_id) {
+
+            // このショップに紐付いている投稿か確認
+            if (
+                get_post_type($interview_id) !== 'shop_interview' ||
+                (int) get_post_meta($interview_id, '_shop_interview_shop_id', true) !== (int) $post_id
+            ) {
+                continue;
+            }
+
+            $saved_interview_ids[] = $interview_id;
+
+            $result = wp_update_post([
+                'ID'          => $interview_id,
+                'post_status' => $shop_status,
+            ], true);
+
+            if (is_wp_error($result)) {
+                continue;
+            }
+
+        } else {
+
+            // 新規インタビューを作成
+            $interview_id = wp_insert_post([
+                'post_type'   => 'shop_interview',
+                'post_status' => $shop_status,
+                'post_author' => get_current_user_id(),
+            ], true);
+
+            if (is_wp_error($interview_id)) {
+                continue;
+            }
+
+            // ショップとの紐付けを保存
+            update_post_meta(
+                $interview_id,
+                '_shop_interview_shop_id',
+                $post_id
+            );
+
+            $saved_interview_ids[] = $interview_id;
+        }
+
+        // 質問・回答を保存
+        update_post_meta(
+            $interview_id,
+            '_shop_interview_question',
+            $question
+        );
+
+        update_post_meta(
+            $interview_id,
+            '_shop_interview_answer',
+            $answer
+        );
+
+        // 表示順を保存
+        update_post_meta(
+            $interview_id,
+            '_shop_interview_order',
+            $order
+        );
+
+        $order++;
+    }
+
+    // 画面から削除されたインタビューをゴミ箱へ移動
+    foreach ($existing_interviews as $existing_id) {
+
+        if (!in_array((int) $existing_id, $saved_interview_ids, true)) {
+            wp_trash_post($existing_id);
+        }
+    }
+}
+add_action('save_post_shop', 'mytheme_save_shop_interviews');

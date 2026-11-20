@@ -8,9 +8,6 @@ require_once get_theme_file_path('/inc/content/shop/save.php');
 require_once get_theme_file_path('/inc/content/history/meta-boxes.php');
 require_once get_theme_file_path('/inc/content/history/fields.php');
 require_once get_theme_file_path('/inc/content/history/save.php');
-// インタビュー関連のファイルを読み込む
-require_once get_theme_file_path('/inc/content/interview/meta-boxes.php');
-require_once get_theme_file_path('/inc/content/interview/fields.php');
 
 define('LVN_MATCH_URL', 'https://dev-best-wp.lvnmatch.com');
 define('BEST_COMPANY_URL', LVN_MATCH_URL . '/shops/');
@@ -91,26 +88,6 @@ function mytheme_register_shop_history_post_type() {
 }
 add_action('init', 'mytheme_register_shop_history_post_type');
 
-/**
- * インタビューのカスタム投稿タイプを登録
- */
-function mytheme_register_shop_interview_post_type() {
-    register_post_type('shop_interview', [
-        'labels' => [
-            'name'          => 'インタビュー',
-            'singular_name' => 'インタビュー',
-            'add_new_item'  => 'インタビューを追加',
-            'edit_item'     => 'インタビューを編集',
-        ],
-        'public'       => false,
-        'show_ui'      => true,
-        'show_in_rest' => false,
-        'menu_icon'    => 'dashicons-format-status',
-        'supports'     => [],
-    ]);
-}
-add_action('init', 'mytheme_register_shop_interview_post_type');
-
 function mytheme_remove_shop_editor_support() {
     remove_post_type_support('shop', 'title');
     remove_post_type_support('shop', 'editor');
@@ -124,13 +101,6 @@ function mytheme_remove_shop_history_editor_support() {
     remove_post_type_support('shop_history', 'thumbnail');
 }
 add_action('init', 'mytheme_remove_shop_history_editor_support', 20);
-
-function mytheme_remove_shop_interview_editor_support() {
-    remove_post_type_support('shop_interview', 'title');
-    remove_post_type_support('shop_interview', 'editor');
-    remove_post_type_support('shop_interview', 'thumbnail');
-}
-add_action('init', 'mytheme_remove_shop_interview_editor_support', 20);
 
 function mytheme_hide_shop_status_field() {
 
@@ -1190,3 +1160,31 @@ function mytheme_add_google_tag_manager() {
     <?php
 }
 add_action('wp_head', 'mytheme_add_google_tag_manager', 1);
+
+/**
+ * ショップ編集画面用JavaScriptを読み込む
+ */
+function mytheme_enqueue_shop_admin_scripts($hook_suffix) {
+    wp_enqueue_script('jquery-ui-sortable');
+    // 投稿編集画面・新規追加画面以外は読み込まない
+    if (!in_array($hook_suffix, ['post.php', 'post-new.php'], true)) {
+        return;
+    }
+
+    $screen = get_current_screen();
+
+    // ショップの編集画面以外は読み込まない
+    if (!$screen || $screen->post_type !== 'shop') {
+        return;
+    }
+
+    wp_enqueue_script(
+        'mytheme-admin-shop-interviews',
+        get_theme_file_uri('/js/admin-shop-interviews.js'),
+        [],
+        wp_get_theme()->get('Version'),
+        true
+    );
+}
+add_action('admin_enqueue_scripts', 'mytheme_enqueue_shop_admin_scripts');
+

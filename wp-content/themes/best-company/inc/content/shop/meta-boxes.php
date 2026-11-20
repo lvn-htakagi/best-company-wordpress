@@ -209,3 +209,10 @@ mytheme_add_shop_meta_box(
     '関係会社',
     'mytheme_render_shop_relationship_field'
 );
+
+// インタビュー
+mytheme_add_shop_meta_box(
+    'shop_interviews',
+    'インタビュー',
+    'mytheme_render_shop_interviews_field'
+);
