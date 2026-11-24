@@ -110,6 +110,11 @@ function mytheme_save_select_field(
         return;
     }
 
+    // 都道府県の場合かつ、管理者以外の権限の場合は保存しない
+    if ($field_name === 'shop_prefecture' && !current_user_can('manage_options')) {
+        return;
+    }
+
     // 投稿を保存できるか確認
     if (!mytheme_can_save_post($post_id, $post_type)) {
         return;

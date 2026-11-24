@@ -132,6 +132,7 @@ function mytheme_render_shop_histories_field($post) {
                                 </option>
                             <?php endfor; ?>
                         </select>
+                        <label>月</label>
                         <select
                             name="shop_histories[0][month]"
                             class="widefat"

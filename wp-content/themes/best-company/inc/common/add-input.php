@@ -6,7 +6,7 @@
  * @param string $field_name フィールド名
  * @param string $label ラベル
  */
-function mytheme_render_text_field($post, $field_name, $label) {
+function mytheme_render_text_field($post, $field_name, $label, $readonly = false) {
     $meta_key = '_' . $field_name;
     $value = get_post_meta($post->ID, $meta_key, true);
     ?>
@@ -20,6 +20,7 @@ function mytheme_render_text_field($post, $field_name, $label) {
         name="<?php echo esc_attr($field_name); ?>"
         style="width: 100%;"
         value="<?php echo esc_attr($value); ?>"
+        <?php echo $readonly ? 'readonly' : ''; ?>
     >
 
     <?php
@@ -113,14 +114,14 @@ function mytheme_render_shop_selector_field($post, $field_name) {
  * @param string $field_name フィールド名
  * @param array $options 選択肢の配列（キーが値、値がラベル）
  */
-function mytheme_render_selector_field($post, $field_name, $options) {
+function mytheme_render_selector_field($post, $field_name, $options, $readonly = false) {
     $selected_value = get_post_meta(
         $post->ID,
         '_' .$field_name,
         true
     );
 
-    echo '<select name="' . esc_attr($field_name) . '" id="' . esc_attr($field_name) . '">';
+    echo '<select name="' . esc_attr($field_name) . '" id="' . esc_attr($field_name) . '" ' . ($readonly ? 'disabled' : '') . '>';
     echo '<option value="">選択してください</option>';
 
     foreach ($options as $key => $label) {

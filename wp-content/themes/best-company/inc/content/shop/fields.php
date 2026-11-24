@@ -179,7 +179,7 @@ function mytheme_render_shop_prefecture_field($post) {
 
     $prefecture = get_post_meta($post->ID, '_shop_prefecture', true);
 
-    mytheme_render_selector_field($post, 'shop_prefecture', mytheme_get_prefectures());
+    mytheme_render_selector_field($post, 'shop_prefecture', mytheme_get_prefectures(), !current_user_can('manage_options'));
 }
 
 /**
@@ -202,6 +202,7 @@ function mytheme_render_shop_year_field($post) {
         max="2100"
         step="1"
         style="width: 100%;"
+        <?php echo !current_user_can('manage_options') ? 'readonly' : ''; ?>
     >
     <?php
 }
@@ -256,7 +257,8 @@ function mytheme_render_shop_custome_id_field($post) {
     mytheme_render_text_field(
         $post,
         'shop_custome_id',
-        'カスタマーID'
+        'カスタマーID',
+        !current_user_can('manage_options')
     );
 }
 

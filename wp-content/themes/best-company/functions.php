@@ -54,14 +54,16 @@ function mytheme_register_shop_post_type() {
             'add_new_item'  => 'ショップを追加',
             'edit_item'     => 'ショップを編集',
         ],
-        'public'       => true,
-        'show_in_rest' => true,
-        'has_archive'  => true,
-        'menu_icon'    => 'dashicons-store',
-        'supports'     => [],
-        'rewrite'      => [
+        'public'          => true,
+        'show_in_rest'    => true,
+        'has_archive'     => true,
+        'menu_icon'       => 'dashicons-store',
+        'supports'        => [],
+        'rewrite'         => [
             'slug' => 'shops',
         ],
+        'capability_type' => ['shop', 'shops'],
+        'map_meta_cap'    => true,
     ]);
 }
 add_action('init', 'mytheme_register_shop_post_type');
@@ -73,46 +75,50 @@ function mytheme_remove_shop_editor_support() {
 }
 add_action('init', 'mytheme_remove_shop_editor_support', 20);
 
-function mytheme_hide_shop_status_field() {
+/**
+ * ショップの権限を設定
+ */
+function mytheme_add_shop_capabilities() {
 
-    if (!current_user_can('manage_options')) {
-        echo '<style>
-            /* 公開ステータス */
-            #misc-publishing-actions .misc-pub-post-status,
-            #post-status-select {
+    // 管理者
+    $admin_role = get_role('administrator');
 
-                display: none !important;
-            }
+    if ($admin_role) {
+        $admin_capabilities = [
+            'edit_shops',
+            'edit_others_shops',
+            'publish_shops',
+            'read_private_shops',
+            'delete_shops',
+            'delete_private_shops',
+            'delete_published_shops',
+            'delete_others_shops',
+            'edit_private_shops',
+            'edit_published_shops',
+            'create_shops',
+        ];
 
-            /* 公開範囲 */
-            #visibility {
+        foreach ($admin_capabilities as $capability) {
+            $admin_role->add_cap($capability);
+        }
+    }
 
-                display: none !important;
-            }
+    // 編集者（一般）
+    $editor_role = get_role('editor');
 
-            /* 投稿日時 */
-            .misc-pub-curtime,
-            #timestampdiv {
+    if ($editor_role) {
+        $editor_capabilities = [
+            'edit_shops',
+            'create_shops',
+        ];
 
-                display: none !important;
-            }
-
-            /* ゴミ箱へ移動 */
-            #delete-action {
-
-                display: none !important;
-            }
-        </style>';
-
-        echo '<style>
-            #publishing-action {
-                display: none !important;
-            }
-        </style>';
+        foreach ($editor_capabilities as $capability) {
+            $editor_role->add_cap($capability);
+        }
     }
 }
-add_action('admin_head-post.php', 'mytheme_hide_shop_status_field');
-add_action('admin_head-post-new.php', 'mytheme_hide_shop_status_field');
+add_action('init', 'mytheme_add_shop_capabilities');
+
 
 function mytheme_restrict_shop_status($data, $postarr) {
 
