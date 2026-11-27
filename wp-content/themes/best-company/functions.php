@@ -610,17 +610,51 @@ function mytheme_shop_orderby($query) {
 add_action('pre_get_posts', 'mytheme_shop_orderby');
 
 /**
- * 年別ショップ一覧のURL
+ * URL
  * /shops/2026 → ショップ一覧（2026年）
+ * 
  */
 function mytheme_shop_year_rewrite_rules() {
+    // 年別ショップ一覧
     add_rewrite_rule(
         '^shops/([0-9]{4})/?$',
         'index.php?post_type=shop&shop_year=$matches[1]',
         'top'
     );
+
+    // ショップ詳細ページ
+    add_rewrite_rule(
+        '^([0-9]{4})/detail/([0-9]+)/?$',
+        'index.php?post_type=shop&name=$matches[2]',
+        'top'
+    );
 }
 add_action('init', 'mytheme_shop_year_rewrite_rules');
+
+/**
+ * ショップ詳細ページのURLを変更
+ * 
+ * @param string $post_link 投稿のパーマリンク
+ * @param WP_Post $post 投稿オブジェクト
+ * @return string 変更後のパーマリンク
+ */
+function mytheme_shop_permalink($post_link, $post) {
+
+    if ($post->post_type !== 'shop') {
+        return $post_link;
+    }
+
+    $shop_year = get_post_meta($post->ID, '_shop_year', true);
+
+    if (empty($shop_year)) {
+        return $post_link;
+    }
+
+    return home_url(
+        '/' . $shop_year . '/detail/' . $post->post_name . '/'
+    );
+}
+add_filter('post_type_link', 'mytheme_shop_permalink', 10, 2);
 
 function mytheme_shop_year_query_vars($vars) {
     $vars[] = 'shop_year';

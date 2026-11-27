@@ -6,9 +6,11 @@
  * @param string $field_name フィールド名
  * @param string $label ラベル
  */
-function mytheme_render_text_field($post, $field_name, $label, $readonly = false) {
-    $meta_key = '_' . $field_name;
-    $value = get_post_meta($post->ID, $meta_key, true);
+function mytheme_render_text_field($post, $field_name, $label, $readonly = false, $value = null) {
+    if ($value === null) {
+        $meta_key = '_' . $field_name;
+        $value = get_post_meta($post->ID, $meta_key, true);
+    }
     ?>
 
     <label for="<?php echo esc_attr($field_name); ?>">

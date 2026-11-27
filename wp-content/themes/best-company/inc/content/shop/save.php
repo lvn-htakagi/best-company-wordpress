@@ -42,6 +42,54 @@
 require_once get_theme_file_path('/inc/common/save-meta-field.php');
 
 /**
+ * IDを保存
+ *
+ * @param int $post_id 投稿ID
+ */
+function mytheme_save_post_name($post_id) {
+
+    // nonce確認
+    if (
+        !isset($_POST['mytheme_post_name_nonce']) ||
+        !wp_verify_nonce(
+            $_POST['mytheme_post_name_nonce'],
+            'mytheme_save_post_name'
+        )
+    ) {
+        return;
+    }
+
+    // 自動保存は除外
+    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+        return;
+    }
+
+    // 権限確認
+    if (!current_user_can('edit_post', $post_id)) {
+        return;
+    }
+
+    // 数字のみ受け付ける
+    if (
+        !isset($_POST['shop_url_id']) ||
+        !preg_match('/^[0-9]+$/', $_POST['shop_url_id'])
+    ) {
+        return;
+    }
+
+    $post_name = sanitize_text_field($_POST['shop_url_id']);
+
+    // URL末尾を更新
+    if (get_post_field('post_name', $post_id) !== $post_name) {
+        wp_update_post([
+            'ID'        => $post_id,
+            'post_name' => $post_name,
+        ]);
+    }
+}
+add_action('save_post_shop', 'mytheme_save_post_name');
+
+/**
  * 会社名を保存
  * 
  * @param int $post_id 投稿ID

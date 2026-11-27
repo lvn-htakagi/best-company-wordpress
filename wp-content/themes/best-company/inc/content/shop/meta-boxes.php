@@ -39,6 +39,14 @@
 
 require_once get_theme_file_path('/inc/common/add-meta-box.php');
 
+// ID
+mytheme_add_shop_meta_box(
+    'post_name',
+    'ID',
+    'mytheme_render_post_name_field',
+    'high'
+);
+
 // カスタマーID
 mytheme_add_shop_meta_box(
     'shop_custome_id',

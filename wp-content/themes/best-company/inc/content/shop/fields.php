@@ -39,11 +39,30 @@
 require_once get_theme_file_path('/inc/common/add-input.php');
 
 /**
+ * ID入力欄を表示
+ *
+ * @param WP_Post $post 投稿オブジェクト
+ */
+function mytheme_render_post_name_field($post) {
+    wp_nonce_field(
+        'mytheme_save_post_name',
+        'mytheme_post_name_nonce'
+    );
+
+    mytheme_render_text_field(
+        $post,
+        'shop_url_id',
+        'ID',
+        !current_user_can('manage_options'),
+        $post->post_name
+    );
+}
+
+/**
  * 名前入力欄を表示
  *
  * @param WP_Post $post 投稿オブジェクト
  */
-
 function mytheme_render_shop_name_field($post) {
     wp_nonce_field(
         'mytheme_save_shop_name',
